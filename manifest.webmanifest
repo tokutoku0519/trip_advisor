@@ -1,0 +1,19 @@
+{
+  "name": "tabi — AI旅行プランナー",
+  "short_name": "tabi",
+  "description": "プラン、旅程、地図、予約、旅の記録をひとつに。",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f7fb",
+  "theme_color": "#f7f8fc",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
