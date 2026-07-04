@@ -21,7 +21,7 @@
   <header class="topbar">
     <a class="brand" href="#" aria-label="Tabi ホーム"><span class="brand-mark">t</span><span>tabi</span></a>
     <nav class="desktop-nav" aria-label="メインナビゲーション">
-      <a class="active" href="#home">ホーム</a><a href="#plans">プラン</a><a href="#discover">見つける</a><a href="#journey">旅の記録</a>
+      <a class="active" href="#home">ホーム</a><a href="#plans">プラン</a><a href="#discover">見つける</a><a href="#booking">予約</a><a href="#journey">旅の記録</a>
     </nav>
     <div class="top-actions"><button class="icon-btn" aria-label="通知">♢<span class="dot"></span></button><button class="avatar">KT</button></div>
   </header>
@@ -36,25 +36,56 @@
       </div>
 
       <div class="planner-card" id="planner">
-        <div class="planner-head"><div><span class="spark">✦</span><h2>どんな旅にする？</h2><p>ざっくりでも大丈夫。AIが形にします。</p></div><span class="step-pill">1 / 2</span></div>
-        <div class="destination-input">
-          <span class="pin-icon">⌖</span><div><label for="destination">行き先</label><input id="destination" value="京都" placeholder="どこへ行く？"></div>
-          <button class="round-btn" id="randomPlace" aria-label="行き先を提案">⌁</button>
+        <div class="planner-head"><div><span class="spark">✦</span><h2>どんな旅にする？</h2><p>条件を選ぶほど、提案が賢くなります。</p></div><span class="step-pill" id="stepPill">1 / 3</span></div>
+        <div class="planner-tabs" role="tablist">
+          <button class="ptab active" data-tab="basic">基本情報</button><button class="ptab" data-tab="detail">こだわり</button><button class="ptab" data-tab="extra">その他</button>
         </div>
-        <div class="field-row">
-          <button class="field-select" id="dateBtn"><span>◫</span><div><small>日程</small><b id="dateLabel">7月18日 — 20日</b></div></button>
-          <button class="field-select" id="peopleBtn"><span>♙</span><div><small>人数</small><b id="peopleLabel">2人</b></div></button>
+
+        <div class="ptab-panel" id="tab-basic">
+          <div class="destination-input">
+            <span class="pin-icon">⌖</span><div><label for="destination">エリア・行き先</label><input id="destination" value="京都" placeholder="どこへ行く？"></div>
+            <button class="round-btn" id="randomPlace" aria-label="行き先を提案">⌁</button>
+          </div>
+          <div class="field-row">
+            <button class="field-select" id="dateBtn"><span>◫</span><div><small>日程</small><b id="dateLabel">7月18日 — 20日（2泊3日）</b></div></button>
+            <div class="field-select stepper"><span>♙</span><div><small>旅行人数</small><b id="peopleLabel">2人</b></div><div class="step-btns"><button id="peopleMinus" aria-label="人数を減らす">−</button><button id="peoplePlus" aria-label="人数を増やす">＋</button></div></div>
+          </div>
+          <div class="mood-block"><div class="label-line"><span>年齢層</span><small>いちばん近いもの</small></div><div class="chips" id="ageChips" data-single>
+            <button class="chip">10代</button><button class="chip active">20代</button><button class="chip">30代</button><button class="chip">40代</button><button class="chip">50代</button><button class="chip">60代〜</button>
+          </div></div>
         </div>
-        <div class="mood-block"><div class="label-line"><span>今の気分は？</span><small>複数選択OK</small></div><div class="chips" id="moodChips">
-          <button class="chip active">🍵 癒されたい</button><button class="chip">🍜 おいしいもの</button><button class="chip">📷 写真を撮る</button><button class="chip">🪄 穴場めぐり</button>
-        </div></div>
+
+        <div class="ptab-panel hidden" id="tab-detail">
+          <div class="mood-block first"><div class="label-line"><span>予算（1人あたり）</span><small>宿・交通込み</small></div><div class="chips" id="budgetChips" data-single>
+            <button class="chip">〜¥20,000</button><button class="chip active">¥20,000〜40,000</button><button class="chip">¥40,000〜80,000</button><button class="chip">¥80,000〜</button>
+          </div></div>
+          <div class="mood-block"><div class="label-line"><span>用途</span><small>誰と行く？</small></div><div class="chips" id="useChips" data-single>
+            <button class="chip">👨‍👩‍👧 家族旅行</button><button class="chip active">💑 デート</button><button class="chip">🚶 ひとり旅</button><button class="chip">🎓 友達・卒業旅行</button><button class="chip">🏢 社員旅行</button>
+          </div></div>
+          <div class="mood-block"><div class="label-line"><span>目的</span><small>複数選択OK</small></div><div class="chips" id="purposeChips">
+            <button class="chip active">📷 カメラ旅</button><button class="chip">🎞 思い出旅</button><button class="chip">💍 プロポーズ</button><button class="chip">♨ 温泉</button><button class="chip">🍜 グルメ</button><button class="chip">🏔 絶景</button><button class="chip">🪄 穴場めぐり</button>
+          </div></div>
+          <div class="mood-block"><div class="label-line"><span>交通手段</span><small>運転の有無も考慮します</small></div><div class="chips" id="transportChips" data-single>
+            <button class="chip active">🚄 電車・バス</button><button class="chip">🚗 車を運転する</button><button class="chip">🚙 レンタカー</button><button class="chip">✈ 飛行機</button>
+          </div></div>
+        </div>
+
+        <div class="ptab-panel hidden" id="tab-extra">
+          <div class="destination-input">
+            <span class="pin-icon">★</span><div><label for="mustVisit">絶対に行きたい場所（あれば）</label><input id="mustVisit" placeholder="例：清水寺、〇〇カフェ"></div>
+          </div>
+          <div class="request-block"><label for="freeRequest">その他リクエスト（あれば）</label>
+            <textarea id="freeRequest" rows="3" placeholder="例：人混みは避けたい。レトロな喫茶店に行きたい。夜は早めに宿に戻りたい。"></textarea>
+          </div>
+        </div>
+
         <button class="primary-btn" id="generateBtn"><span>AIに旅をつくってもらう</span><b>→</b></button>
-        <p class="fineprint"><span>✦</span> 1分ほどで、3つのプランを提案します</p>
+        <p class="fineprint"><span>✦</span> 条件に合わせて、3つのプランを提案します</p>
       </div>
     </section>
 
     <section class="section plans-section" id="plans">
-      <div class="section-heading"><div><span class="kicker">JUST FOR YOU</span><h2>あなたに似合う、3つの旅</h2></div><button class="text-btn" id="regenerateBtn">条件を変える ↗</button></div>
+      <div class="section-heading"><div><span class="kicker">JUST FOR YOU</span><h2>あなたに似合う、3つの旅</h2><div class="match-tags" id="matchTags"></div></div><button class="text-btn" id="regenerateBtn">条件を変える ↗</button></div>
       <div class="plan-grid" id="planGrid">
         <article class="plan-card featured" data-plan="王道と余白"><div class="plan-photo photo-kyoto"><div class="badge">BEST MATCH · 96%</div><button class="heart active">♥</button><div class="photo-caption"><small>PLAN A</small><h3>王道と余白を<br>味わう京都</h3><p>定番も、小さな発見も。</p></div></div><div class="plan-info"><div class="meta"><span>2泊3日</span><span>徒歩多め</span><span>¥32,800〜</span></div><button class="choose-plan">この旅を見る <span>→</span></button></div></article>
         <article class="plan-card" data-plan="路地裏と喫茶"><div class="plan-photo photo-alley"><div class="badge dark">LOCAL PICK</div><button class="heart">♡</button><div class="photo-caption"><small>PLAN B</small><h3>路地裏と喫茶を<br>めぐる京都</h3><p>静かな京都に会いに行く。</p></div></div><div class="plan-info"><div class="meta"><span>2泊3日</span><span>のんびり</span><span>¥27,400〜</span></div><button class="choose-plan">この旅を見る <span>→</span></button></div></article>
@@ -90,6 +121,22 @@
       </div>
     </section>
 
+    <section class="section booking-section" id="booking">
+      <div class="section-heading"><div><span class="kicker">BOOK &amp; GO</span><h2>予約もチケットも、まとめて</h2><p>プランに含まれる交通・宿・体験を、そのままここで予約。<br>海外なら当日乗車券やeSIMもアプリで買えます。</p></div>
+        <div class="day-tabs booking-tabs"><button class="active" data-mode="domestic">🇯🇵 国内の旅</button><button data-mode="overseas">🌏 海外の旅</button></div>
+      </div>
+      <div class="booking-layout">
+        <div class="booking-list" id="bookingList"></div>
+        <aside class="booking-summary">
+          <h3>予約リスト</h3>
+          <div class="summary-rows" id="summaryRows"></div>
+          <div class="summary-total"><span>合計</span><b id="summaryTotal">¥0</b></div>
+          <button class="primary-btn" id="bookAllBtn"><span>まとめて予約・購入する</span><b>→</b></button>
+          <p class="fineprint"><span>✦</span> 予約確認・QRチケットはすべてアプリに保存されます</p>
+        </aside>
+      </div>
+    </section>
+
     <section class="section journey-section" id="journey">
       <div class="journey-copy"><span class="kicker">MEMORIES, BEAUTIFULLY KEPT</span><h2>旅のあとも、<br>物語はつづく。</h2><p>写真もルートも支出も、自動で一冊の旅のしおりに。友達との共有も、ワンタップ。</p><div class="feature-list"><span>✓ 写真を日付・場所で整理</span><span>✓ 訪れたルートを自動記録</span><span>✓ URLひとつで友達に共有</span></div><button class="dark-btn" id="shareBtn">旅のしおりを見る →</button></div>
       <div class="memory-collage"><div class="polaroid one"><div class="memory-img m1"></div><p>Day 1 · 祇園</p></div><div class="polaroid two"><div class="memory-img m2"></div><p>おいしかった ☺</p></div><div class="route-summary"><div class="tiny-map"></div><div><small>KYOTO TRIP</small><h3>18 spots</h3><p>28.6 km · 36,248 steps</p></div></div></div>
@@ -98,7 +145,7 @@
 
   <footer><a class="brand" href="#"><span class="brand-mark">t</span><span>tabi</span></a><p>旅を、ひとつの物語に。</p><div><a href="#">利用規約</a><a href="#">プライバシー</a><span>© 2026 tabi</span></div></footer>
 
-  <div class="mobile-nav"><a href="#home" class="active">⌂<small>ホーム</small></a><a href="#discover">⌕<small>見つける</small></a><button id="mobilePlan">✦</button><a href="#itinerary">▤<small>旅程</small></a><a href="#journey">♙<small>マイページ</small></a></div>
+  <div class="mobile-nav"><a href="#home" class="active">⌂<small>ホーム</small></a><a href="#itinerary">▤<small>旅程</small></a><button id="mobilePlan">✦</button><a href="#booking">◫<small>予約</small></a><a href="#journey">♙<small>マイページ</small></a></div>
   <div class="toast" id="toast"><span>✓</span><p>旅程に追加しました</p></div>
   <div class="modal" id="modal" aria-hidden="true"><div class="modal-backdrop"></div><div class="modal-card"><button class="modal-close" id="modalClose">×</button><span class="modal-icon">✦</span><h2 id="modalTitle">旅をつくっています</h2><p id="modalText">あなたの「好き」を組み合わせて、3つのプランを考えています。</p><div class="loading"><i></i><i></i><i></i></div><button class="primary-btn modal-action" id="modalAction">プランを見る →</button></div></div>
   <script src="app.js"></script>
