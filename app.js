@@ -24,7 +24,7 @@ ja:{
  'toast.copied':'招待リンクをコピーしました','toast.liked':'いいねしました','toast.unliked':'いいねを外しました','toast.bm':'ブックマークしました','toast.unbm':'ブックマークを外しました','toast.share':'リンクをコピーしました',
  'toast.addplan':(n)=>`「${n}」をプランに追加しました`,'toast.start':(n)=>`${n}の旅をはじめました。しおりを作成しました`,'toast.settle':'精算リクエストを送りました（デモ）','toast.paypay.on':'PayPayの決済取込をオンにしました','toast.paypay.off':'PayPayの決済取込をオフにしました','toast.exp':'支出を追加しました','toast.photo':'写真を追加しました','toast.detour':(n)=>`「${n}」を寄り道に追加しました`,'toast.swap':'プランを差し替えました','toast.diary':'日記に追記しました','toast.post':'ショートを公開しました','toast.clip':'クリップを選択しました',
  'reason.kw':(k)=>`「${k}」の希望にマッチ`,'reason.type':(t)=>`${t}の定番`,'reason.dest':'指定の行き先','reason.near':'条件にマッチ','reason.generic':'この行き先向けの基本プラン',
- 'people':(n)=>`${n}人`,'v.classic':'王道プラン','v.classic.d':'定番を効率よく。はじめてならこれ','v.theme':(k)=>`${k}中心プラン`,'v.theme.d':(k)=>`${k}を軸に組み直した1本`,'v.slow':'のんびりプラン','v.slow.d':'1日2スポットだけ。余白を楽しむ',
+ 'people':(n)=>`${n}人`,'f.origin.gps':'現在地（GPS）','set.edit':'編集','set.title':'よくいる場所・住所','set.note':'ここに登録した場所が検索の出発地チップに出ます','set.add':'追加','set.ph':'例：自宅（世田谷区）、伊丹空港','toast.gps.ok':'現在地を出発地に設定しました','toast.gps.ng':'現在地を取得できませんでした（権限を確認）','toast.place':'保存しました','p.saved':'保存したプラン','toast.bmplan':'プランを保存しました','ev.edit':'予定を編集','ev.name':'名前','ev.time':'時刻','ev.del':'この予定を削除','ev.save':'保存','ev.add':'＋ スポットを追加','toast.evsave':'旅程を更新しました','toast.evdel':'予定を削除しました','v.classic':'王道プラン','v.classic.d':'定番を効率よく。はじめてならこれ','v.theme':(k)=>`${k}中心プラン`,'v.theme.d':(k)=>`${k}を軸に組み直した1本`,'v.slow':'のんびりプラン','v.slow.d':'1日2スポットだけ。余白を楽しむ',
 },
 en:{
  'tab.plan':'Plans','tab.discover':'Discover','tab.shiori':'Journal','tab.tips':'Tips',
@@ -50,7 +50,7 @@ en:{
  'toast.copied':'Invite link copied','toast.liked':'Liked','toast.unliked':'Like removed','toast.bm':'Bookmarked','toast.unbm':'Bookmark removed','toast.share':'Link copied',
  'toast.addplan':(n)=>`Added "${n}" to your plan`,'toast.start':(n)=>`Started your ${n} trip. Journal created`,'toast.settle':'Settlement request sent (demo)','toast.paypay.on':'PayPay auto-import ON','toast.paypay.off':'PayPay auto-import OFF','toast.exp':'Expense added','toast.photo':'Photos added','toast.detour':(n)=>`Added "${n}" as a detour`,'toast.swap':'Swapped in your plan','toast.diary':'Added to diary','toast.post':'Short published','toast.clip':'Clip selected',
  'reason.kw':(k)=>`Matches "${k}"`,'reason.type':(t)=>`Popular for ${t}`,'reason.dest':'Your destination','reason.near':'Matches your wishes','reason.generic':'Base plan for this destination',
- 'people':(n)=>`${n} people`,'v.classic':'Classic plan','v.classic.d':'The essentials, efficiently. Best for first-timers','v.theme':(k)=>`${k}-focused plan`,'v.theme.d':(k)=>`Rebuilt around ${k}`,'v.slow':'Slow plan','v.slow.d':'Just 2 spots a day. Enjoy the space between',
+ 'people':(n)=>`${n} people`,'f.origin.gps':'Current location (GPS)','set.edit':'Edit','set.title':'Saved places','set.note':'These appear as origin chips in search','set.add':'Add','set.ph':'e.g. Home (Setagaya), Itami Airport','toast.gps.ok':'Origin set to current location','toast.gps.ng':'Could not get location (check permission)','toast.place':'Saved','p.saved':'Saved plans','toast.bmplan':'Plan saved','ev.edit':'Edit item','ev.name':'Name','ev.time':'Time','ev.del':'Delete this item','ev.save':'Save','ev.add':'+ Add a spot','toast.evsave':'Itinerary updated','toast.evdel':'Item deleted','v.classic':'Classic plan','v.classic.d':'The essentials, efficiently. Best for first-timers','v.theme':(k)=>`${k}-focused plan`,'v.theme.d':(k)=>`Rebuilt around ${k}`,'v.slow':'Slow plan','v.slow.d':'Just 2 spots a day. Enjoy the space between',
 }};
 const state={lang:'ja',screen:'plan',disMode:'grid',disTag:'all',disQuery:'',shioriTab:'itin',paypayOn:true,results:null,
  form:{dest:'',vague:'',origin:'',goal:'',roundtrip:true,from:'',to:'',tbd:false,type:'',people:2,budget:'',license:'',must:''}};
@@ -77,7 +77,7 @@ const SCENES={
 const sceneArt=(key)=>`<svg class="scene" viewBox="0 0 200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true">${SCENES[key]||SCENES.mountains}</svg>`;
 
 /* ================= データ ================= */
-const TYPE_META={activity:{ja:'アクティビティ',en:'Activity',icon:'🛶'},scenery:{ja:'景色',en:'Scenery',icon:'🏔'},food:{ja:'食事',en:'Food',icon:'🍜'},cafe:{ja:'カフェ',en:'Café',icon:'☕'},hotel:{ja:'宿',en:'Stay',icon:'🏨'},ride:{ja:'乗り物',en:'Ride',icon:'🚃'}};
+const TYPE_META={activity:{ja:'アクティビティ',en:'Activity',icon:'🚶'},scenery:{ja:'景色',en:'Scenery',icon:'🏔'},food:{ja:'食事',en:'Food',icon:'🍜'},cafe:{ja:'カフェ',en:'Café',icon:'☕'},hotel:{ja:'宿',en:'Stay',icon:'🏨'},ride:{ja:'乗り物',en:'Ride',icon:'🚃'}};
 const USE_TAGS=[{id:'stay',ja:'🏨 泊まる',en:'🏨 Stay'},{id:'ride',ja:'🚃 乗る',en:'🚃 Ride'},{id:'eat',ja:'🍜 食べる',en:'🍜 Eat'},{id:'play',ja:'🛶 遊ぶ',en:'🛶 Play'},{id:'view',ja:'🏔 景色',en:'🏔 Views'}];
 const TYPE2TAG={hotel:'stay',ride:'ride',food:'eat',cafe:'eat',activity:'play',scenery:'view'};
 const TRIP_TYPES=[{id:'grad',ja:'🎓 卒業旅行',en:'🎓 Grad trip'},{id:'honeymoon',ja:'💒 ハネムーン',en:'💒 Honeymoon'},{id:'girls',ja:'👭 女子旅',en:'👭 Girls trip'},{id:'doki',ja:'🏢 同期旅行',en:'🏢 Work friends'},{id:'propose',ja:'💍 プロポーズ',en:'💍 Proposal'},{id:'date',ja:'💑 デート',en:'💑 Date'},{id:'solo',ja:'🚶 ひとり旅',en:'🚶 Solo'},{id:'family',ja:'👨‍👩‍👧 家族旅行',en:'👨‍👩‍👧 Family'}];
@@ -89,8 +89,18 @@ const FEAT_LABEL={onsen:{ja:'♨ 温泉',en:'♨ Onsen'},beach:{ja:'🏖 海',en
 /* spots: dur は現実的な滞在時間（分） */
 const DESTS=[
 {id:'kyoto',ja:'京都',en:'Kyoto',country:'jp',grad:'g-kyoto',scene:'torii',emoji:'⛩',feat:['culture','view','food','cafe'],needCar:false,travelMin:135,mode:'🚄',
- station:{ja:'京都駅',en:'Kyoto Sta.'},ride:{ja:'のぞみ207号',en:'Nozomi 207'},transport:{ja:'新幹線（往復）',en:'Shinkansen (rt)',price:26640},hotel:{ja:'THE GATE HOTEL 京都高瀬川',en:'THE GATE HOTEL Kyoto',price:24000},act:{ja:'茶道体験（和菓子付き）',en:'Tea ceremony w/ sweets',price:4500},
- spots:[{ja:'清水寺',en:'Kiyomizu-dera',type:'scenery',dur:90},{ja:'二年坂・三年坂さんぽ',en:'Ninenzaka walk',type:'activity',dur:60},{ja:'祇園 京料理ランチ',en:'Gion kyo-ryori lunch',type:'food',dur:70},{ja:'％ Arabica 嵐山',en:'% Arabica Arashiyama',type:'cafe',dur:40},{ja:'伏見稲荷大社',en:'Fushimi Inari',type:'scenery',dur:120},{ja:'錦市場 食べ歩き',en:'Nishiki Market bites',type:'food',dur:60},{ja:'嵐山 竹林の小径',en:'Arashiyama bamboo grove',type:'scenery',dur:60},{ja:'鴨川 夕方さんぽ',en:'Kamo River sunset walk',type:'activity',dur:40},{ja:'先斗町 おばんざいディナー',en:'Pontocho obanzai dinner',type:'food',dur:90},{ja:'喫茶ソワレ',en:'Kissa Soirée',type:'cafe',dur:45}]},
+ station:{ja:'京都駅',en:'Kyoto Sta.'},ride:{ja:'のぞみ15号',en:'Nozomi 15'},transport:{ja:'新幹線（往復）',en:'Shinkansen (rt)',price:26640},hotel:{ja:'THE GATE HOTEL 京都高瀬川',en:'THE GATE HOTEL Kyoto',price:24000},act:{ja:'茶道体験（和菓子付き）',en:'Tea ceremony w/ sweets',price:4500},
+ legs:[{icon:'🚄',name:{ja:'のぞみ15号 博多行',en:'Nozomi 15 for Hakata'},dep:'08:12',from:{ja:'東京駅 18番線',en:'Tokyo Sta. Track 18'},arr:'10:27',to:{ja:'京都駅',en:'Kyoto Sta.'},note:{ja:'指定席8号車・次発 8:30, 8:48',en:'Car 8 reserved · next 8:30, 8:48'}}],back:{dep:'17:04',arr:'19:21',name:{ja:'のぞみ46号 東京行',en:'Nozomi 46 for Tokyo'}},
+ spots:[{ja:'清水寺',en:'Kiyomizu-dera',type:'scenery',dur:90,go:{ja:'市バス206系統 15分＋清水道から徒歩10分',en:'City bus #206 15 min + walk 10 min',min:25},sub:{ja:'本堂・舞台→音羽の滝の順で混雑回避',en:'Main hall → Otowa falls to avoid crowds'}},
+  {ja:'二年坂・三年坂さんぽ',en:'Ninenzaka walk',type:'activity',dur:60,go:{ja:'徒歩8分',en:'Walk 8 min',min:8},sub:{ja:'八坂の塔→二年坂→ねねの道の順',en:'Yasaka Pagoda → Ninenzaka → Nene-no-michi'}},
+  {ja:'鴨川 夕方さんぽ',en:'Kamo River sunset walk',type:'activity',dur:40,go:{ja:'祇園四条方面へ徒歩15分',en:'Walk 15 min toward Gion-Shijo',min:15},sub:{ja:'四条大橋〜三条大橋の右岸',en:'Right bank, Shijo to Sanjo bridge'}},
+  {ja:'伏見稲荷大社',en:'Fushimi Inari',type:'scenery',dur:120,go:{ja:'京阪本線 祇園四条→伏見稲荷 15分＋徒歩5分',en:'Keihan Line 15 min + walk 5 min',min:20},sub:{ja:'千本鳥居→四ツ辻まで往復',en:'Senbon Torii → Yotsutsuji viewpoint'}},
+  {ja:'嵐山 竹林の小径',en:'Arashiyama bamboo grove',type:'scenery',dur:60,go:{ja:'JR奈良線→嵯峨野線 乗換 約55分',en:'JR Nara→Sagano Line, ~55 min',min:55},sub:{ja:'野宮神社側から入ると順光',en:'Enter from Nonomiya side for light'}},
+  {ja:'％ Arabica 嵐山',en:'% Arabica Arashiyama',type:'cafe',dur:40,go:{ja:'渡月橋方面へ徒歩12分',en:'Walk 12 min toward Togetsukyo',min:12},sub:{ja:'川沿いの立ち飲みラテが名物',en:'Riverside latte spot'}},
+  {ja:'祇園 麺処むらじ（担々麺）',en:'Menya Muraji, Gion (dan-dan)',type:'food',dur:60,near:{ja:'祇園四条・徒歩5分圏の代替も表示中',en:'Gion-Shijo area; nearby options shown'}},
+  {ja:'錦市場 食べ歩き',en:'Nishiki Market bites',type:'food',dur:60,near:{ja:'四条河原町から徒歩5分',en:'5 min from Shijo-Kawaramachi'}},
+  {ja:'先斗町 ますだ（おばんざい）',en:'Masuda, Pontocho (obanzai)',type:'food',dur:90,near:{ja:'先斗町通・要予約',en:'Pontocho alley · reserve ahead'}},
+  {ja:'喫茶ソワレ',en:'Kissa Soirée',type:'cafe',dur:45,go:{ja:'徒歩6分',en:'Walk 6 min',min:6},sub:{ja:'青い照明とゼリーポンチ',en:'Blue lights & jelly punch'}}]},
 {id:'hakone',ja:'箱根',en:'Hakone',country:'jp',grad:'g-onsen',scene:'onsen',emoji:'♨',feat:['onsen','view'],needCar:false,travelMin:85,mode:'🚃',
  station:{ja:'箱根湯本駅',en:'Hakone-Yumoto Sta.'},ride:{ja:'ロマンスカーGSE',en:'Romancecar GSE'},transport:{ja:'ロマンスカー（往復）',en:'Romancecar (rt)',price:4800},hotel:{ja:'客室露天風呂の宿',en:'Ryokan w/ private onsen',price:32000},act:{ja:'海賊船＋ロープウェイ',en:'Pirate ship + ropeway',price:6000},
  spots:[{ja:'大涌谷',en:'Owakudani',type:'scenery',dur:75},{ja:'芦ノ湖 海賊船',en:'Lake Ashi cruise',type:'activity',dur:60},{ja:'箱根神社',en:'Hakone Shrine',type:'scenery',dur:50},{ja:'湖畔の蕎麦ランチ',en:'Lakeside soba lunch',type:'food',dur:60},{ja:'彫刻の森美術館',en:'Open-Air Museum',type:'activity',dur:120},{ja:'温泉街 食べ歩き',en:'Onsen town bites',type:'food',dur:60},{ja:'湖畔カフェ',en:'Lakeside café',type:'cafe',dur:45},{ja:'旅館の会席ディナー',en:'Kaiseki dinner',type:'food',dur:100},{ja:'日帰り湯でひと休み',en:'Day-use onsen',type:'activity',dur:90}]},
@@ -109,6 +119,35 @@ const DESTS=[
 {id:'sado',ja:'佐渡島',en:'Sado Island',country:'jp',grad:'g-view',scene:'island',emoji:'🏝',feat:['island','view'],needCar:true,travelMin:260,mode:'🚢',
  station:{ja:'両津港',en:'Ryotsu Port'},ride:{ja:'ときわ丸（カーフェリー）',en:'Tokiwa-maru ferry'},transport:{ja:'新幹線＋フェリー（往復）',en:'Shinkansen + ferry (rt)',price:18000},hotel:{ja:'両津の温泉宿',en:'Ryotsu onsen inn',price:14000},act:{ja:'たらい舟体験',en:'Tarai-bune tub boat',price:1500},
  spots:[{ja:'たらい舟体験（小木）',en:'Tarai-bune at Ogi',type:'activity',dur:45},{ja:'佐渡金山',en:'Sado Gold Mine',type:'activity',dur:100},{ja:'海鮮ランチ',en:'Seafood lunch',type:'food',dur:60},{ja:'宿根木の町並み',en:'Shukunegi old town',type:'scenery',dur:70},{ja:'二ツ亀',en:'Futatsugame rocks',type:'scenery',dur:60},{ja:'トキの森公園',en:'Toki Forest Park',type:'activity',dur:75},{ja:'港前カフェ',en:'Harbor café',type:'cafe',dur:40},{ja:'寿司ディナー',en:'Sushi dinner',type:'food',dur:80}]},
+{id:'shodoshima',ja:'小豆島',en:'Shodoshima',country:'jp',grad:'g-view',scene:'island',emoji:'🫒',feat:['island','view','food'],needCar:true,travelMin:429,mode:'⛴',
+ station:{ja:'土庄港',en:'Tonosho Port'},ride:{ja:'高松発 高速艇',en:'Ferry from Takamatsu'},transport:{ja:'新幹線＋マリンライナー＋高速艇（往復）',en:'Shinkansen + Marine Liner + ferry (rt)',price:21490},hotel:{ja:'土庄港の島宿',en:'Island inn, Tonosho',price:13000},act:{ja:'オリーブ収穫体験',en:'Olive picking',price:1500},
+ legs:[{icon:'🚄',name:{ja:'のぞみ15号 博多行',en:'Nozomi 15 for Hakata'},dep:'08:12',from:{ja:'東京駅 18番線',en:'Tokyo Sta. Track 18'},arr:'11:25',to:{ja:'岡山駅',en:'Okayama Sta.'},note:{ja:'新大阪まで直通・8号車',en:'Direct via Shin-Osaka · Car 8'}},
+  {icon:'🚃',name:{ja:'快速マリンライナー27号 高松行',en:'Rapid Marine Liner 27'},dep:'11:42',from:{ja:'岡山駅 8番線',en:'Okayama Track 8'},arr:'12:37',to:{ja:'高松駅',en:'Takamatsu Sta.'},note:{ja:'瀬戸大橋線・中間部に乗車・次発 12:13',en:'Seto-Ohashi Line · board mid-train'}},
+  {icon:'🚶',name:{ja:'徒歩 550m',en:'Walk 550m'},dep:'12:40',from:{ja:'高松駅 東口',en:'Takamatsu East Exit'},arr:'12:47',to:{ja:'高松港',en:'Takamatsu Port'},note:{ja:'約7分',en:'~7 min'}},
+  {icon:'⛴',name:{ja:'高速艇 小豆島（土庄）行',en:'High-speed ferry to Tonosho'},dep:'13:00',from:{ja:'高松港',en:'Takamatsu Port'},arr:'13:35',to:{ja:'土庄港',en:'Tonosho Port'},note:{ja:'次発 14:20, 15:50',en:'Next 14:20, 15:50'}}],
+ back:{dep:'14:45',arr:'21:30',name:{ja:'高速艇→マリンライナー→のぞみ',en:'Ferry → Marine Liner → Nozomi'}},
+ spots:[{ja:'エンジェルロード',en:'Angel Road',type:'scenery',dur:50,go:{ja:'土庄港から徒歩20分（干潮時間を確認）',en:'Walk 20 min · check low tide',min:20},sub:{ja:'干潮の前後2時間だけ渡れる砂の道',en:'Sandbar crossable ±2h of low tide'}},
+  {ja:'寒霞渓ロープウェイ',en:'Kankakei Ropeway',type:'scenery',dur:90,go:{ja:'小豆島オリーブバス＋ロープウェイ 約50分',en:'Olive Bus + ropeway ~50 min',min:50},sub:{ja:'紅雲亭→山頂 5分の空中散歩',en:'5-min ride to the summit'}},
+  {ja:'道の駅 小豆島オリーブ公園',en:'Olive Park',type:'activity',dur:75,go:{ja:'オリーブバス 25分',en:'Olive Bus 25 min',min:25},sub:{ja:'白い風車とほうき借りて写真を',en:'White windmill photo w/ broom rental'}},
+  {ja:'醤の郷さんぽ',en:'Hishio-no-Sato soy district',type:'activity',dur:60,go:{ja:'オリーブバス 15分',en:'Olive Bus 15 min',min:15},sub:{ja:'醤油蔵の黒板塀が続く通り',en:'Streets of soy-sauce warehouses'}},
+  {ja:'二十四の瞳映画村',en:'Nijushi-no-Hitomi Movie Village',type:'activity',dur:80,go:{ja:'田ノ浦映画村線バス 40分',en:'Bus 40 min',min:40}},
+  {ja:'なかぶ庵（生そうめん）',en:'Nakabuan fresh somen',type:'food',dur:50,near:{ja:'醤の郷エリア',en:'Hishio-no-Sato area'}},
+  {ja:'ひしお丼（島メシ）',en:'Hishio-don bowl',type:'food',dur:60,near:{ja:'土庄港・オリーブ公園周辺',en:'Near Tonosho / Olive Park'}},
+  {ja:'島カフェ 忠左衛門',en:'Chuzaemon olive café',type:'cafe',dur:45,go:{ja:'徒歩10分',en:'Walk 10 min',min:10}}]},
+{id:'lisbon',ja:'リスボン',en:'Lisbon',country:'pt',grad:'g-paris',scene:'skyline',emoji:'🚋',feat:['culture','view','food'],needCar:false,travelMin:1140,arrLocal:'21:15',mode:'✈',
+ station:{ja:'リスボン空港',en:'Lisbon Airport'},ride:{ja:'JL43便→AF1024便',en:'JL43 → AF1024'},transport:{ja:'飛行機 パリ乗継（往復）',en:'Flights via Paris (rt)',price:195000},hotel:{ja:'バイシャ地区のホテル',en:'Baixa district hotel',price:22000},act:{ja:'トラム28乗車＋サン・ジョルジェ城',en:'Tram 28 + São Jorge Castle',price:3000},
+ legs:[{icon:'✈',name:{ja:'JL43便 パリ行',en:'JL43 to Paris'},dep:'09:55',from:{ja:'羽田空港 T3 114番ゲート',en:'Haneda T3 Gate 114'},arr:'17:15',to:{ja:'パリCDG T2E',en:'Paris CDG T2E'},note:{ja:'約14時間25分・現地時刻表示',en:'~14h25m · local time shown'}},
+  {icon:'✈',name:{ja:'AF1024便 リスボン行',en:'AF1024 to Lisbon'},dep:'19:30',from:{ja:'CDG T2F K41ゲート',en:'CDG T2F Gate K41'},arr:'21:15',to:{ja:'リスボン空港',en:'Lisbon Airport'},note:{ja:'乗継2時間15分・要ターミナル移動',en:'2h15m connection · terminal change'}}],
+ back:{dep:'10:05',arr:'翌日 15:55',name:{ja:'AF1025便→JL46便',en:'AF1025 → JL46'}},
+ spots:[{ja:'アルファマ旧市街（トラム28）',en:'Alfama old town (Tram 28)',type:'activity',dur:120,go:{ja:'トラム28番 マルティン・モニス発 20分',en:'Tram 28 from Martim Moniz, 20 min',min:20},sub:{ja:'大聖堂→サンタ・ルジア展望台→泥棒市',en:'Sé → Santa Luzia viewpoint → flea market'}},
+  {ja:'サン・ジョルジェ城',en:'São Jorge Castle',type:'scenery',dur:90,go:{ja:'アルファマから坂道を徒歩15分',en:'Uphill walk 15 min',min:15},sub:{ja:'城壁からテージョ川を一望',en:'Tagus views from the ramparts'}},
+  {ja:'ジェロニモス修道院',en:'Jerónimos Monastery',type:'scenery',dur:100,go:{ja:'トラム15E ベレン行 30分',en:'Tram 15E to Belém, 30 min',min:30},sub:{ja:'マヌエル様式の回廊は午前が空く',en:'Cloisters quieter in the morning'}},
+  {ja:'ベレンの塔',en:'Belém Tower',type:'scenery',dur:60,go:{ja:'川沿いを徒歩10分',en:'Riverside walk 10 min',min:10}},
+  {ja:'LXファクトリー',en:'LX Factory',type:'activity',dur:90,go:{ja:'バス714系統 15分',en:'Bus 714, 15 min',min:15},sub:{ja:'倉庫街のショップ＆本屋Ler Devagar',en:'Warehouse shops & Ler Devagar bookstore'}},
+  {ja:'パステイス・デ・ベレン',en:'Pastéis de Belém',type:'food',dur:40,near:{ja:'ジェロニモス修道院すぐ・行列は回転早い',en:'By the monastery · fast-moving queue'}},
+  {ja:'セルヴェジャリア・ラミロ（海老）',en:'Cervejaria Ramiro (seafood)',type:'food',dur:90,near:{ja:'アヴェニーダ・アルミランテ・レイス',en:'Av. Almirante Reis'}},
+  {ja:'タイムアウト・マーケット',en:'Time Out Market',type:'food',dur:70,near:{ja:'カイス・ド・ソドレ駅前',en:'By Cais do Sodré station'}},
+  {ja:'ミラドウロのジンジーニャ',en:'Ginjinha at a miradouro',type:'cafe',dur:40,go:{ja:'徒歩8分',en:'Walk 8 min',min:8}}]},
 {id:'taipei',ja:'台北',en:'Taipei',country:'tw',grad:'g-night',scene:'lantern',emoji:'🏮',feat:['food','night','cafe'],needCar:false,travelMin:250,mode:'✈',
  station:{ja:'桃園空港',en:'Taoyuan Airport'},ride:{ja:'CI221便',en:'CI 221'},transport:{ja:'飛行機（往復）',en:'Flight (rt)',price:42000},hotel:{ja:'中山エリアのホテル',en:'Zhongshan hotel',price:12000},act:{ja:'九份・十分ツアー',en:'Jiufen & Shifen tour',price:6500},
  spots:[{ja:'九份 提灯の街',en:'Jiufen lantern streets',type:'scenery',dur:150},{ja:'鼎泰豊で小籠包',en:'Din Tai Fung xiaolongbao',type:'food',dur:70},{ja:'士林夜市',en:'Shilin Night Market',type:'food',dur:100},{ja:'永康街カフェ',en:'Yongkang St. café',type:'cafe',dur:50},{ja:'中正紀念堂',en:'CKS Memorial Hall',type:'scenery',dur:70},{ja:'象山から夜景',en:'Elephant Mtn night view',type:'scenery',dur:90},{ja:'迪化街さんぽ',en:'Dihua Street stroll',type:'activity',dur:60},{ja:'マンゴーかき氷',en:'Mango shaved ice',type:'food',dur:40},{ja:'台北101展望台',en:'Taipei 101 observatory',type:'activity',dur:90}]},
@@ -129,6 +168,12 @@ const DESTS=[
  spots:[{ja:'エッフェル塔',en:'Eiffel Tower',type:'scenery',dur:120},{ja:'ルーヴル美術館（半日）',en:'Louvre Museum (half day)',type:'activity',dur:240},{ja:'マレ地区のカフェ',en:'Le Marais café',type:'cafe',dur:60},{ja:'セーヌ川クルーズ',en:'Seine river cruise',type:'scenery',dur:75},{ja:'モンマルトルさんぽ',en:'Montmartre stroll',type:'activity',dur:100},{ja:'ビストロディナー',en:'Bistro dinner',type:'food',dur:100},{ja:'夜のエッフェル塔',en:'Eiffel Tower at night',type:'scenery',dur:45},{ja:'パン屋巡りの朝',en:'Boulangerie morning',type:'food',dur:60},{ja:'オルセー美術館',en:'Musée d\'Orsay',type:'activity',dur:150}]},
 ];
 const destById=(id)=>DESTS.find(d=>d.id===id);
+[['kyoto',[[40,160],[110,160],[110,120],[180,120],[250,120],[250,40]]],['shodoshima',[[40,120],[110,80],[180,80],[250,120],[300,120]]],['lisbon',[[40,160],[110,120],[110,80],[180,40],[250,80],[300,160]]]].forEach(([id,mp])=>{const d=destById(id);if(d)d.mapPts=mp});
+const IMG={kyoto:'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=900&q=70',kanazawa:'https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?auto=format&fit=crop&w=900&q=70',kamakura:'https://images.unsplash.com/photo-1526481280695-3c687fd643ed?auto=format&fit=crop&w=900&q=70',hakone:'https://images.unsplash.com/photo-1528360983277-13d401cdc186?auto=format&fit=crop&w=900&q=70'};
+const coverArt=(dest)=>`${IMG[dest.id]?`<span class="ph" style="background-image:url('${IMG[dest.id]}')"></span>`:''}${sceneArt(dest.scene)}`;
+const AIRPORTS=['羽田空港','成田空港','関西国際空港','中部国際空港','福岡空港','新千歳空港'];
+function savedPlaces(){try{return JSON.parse(localStorage.getItem('tabi.places'))||['東京駅','羽田空港']}catch(e){return ['東京駅','羽田空港']}}
+function setPlaces(a){try{localStorage.setItem('tabi.places',JSON.stringify(a))}catch(e){}}
 function makeGenericDest(name){return{id:'generic',ja:name,en:name,country:'jp',grad:'g-view',scene:'mountains',emoji:'🧭',feat:['view','food'],needCar:false,travelMin:150,mode:'🚄',generic:true,
  station:{ja:`${name}駅`,en:`${name} Sta.`},ride:{ja:'特急',en:'Express'},transport:{ja:'電車・特急（往復）',en:'Train (rt)',price:14000},hotel:{ja:`${name}駅前のホテル`,en:`Hotel near ${name}`,price:12000},act:{ja:'ローカルガイドツアー',en:'Local guide tour',price:3000},
  spots:[{ja:`${name}のシンボルスポット`,en:`${name} landmark`,type:'scenery',dur:80},{ja:'旧市街さんぽ',en:'Old town walk',type:'activity',dur:70},{ja:'名物ランチ',en:'Local specialty lunch',type:'food',dur:60},{ja:'展望スポット',en:'Viewpoint',type:'scenery',dur:60},{ja:'地元で人気のカフェ',en:'Popular local café',type:'cafe',dur:45},{ja:'市場・商店街',en:'Local market',type:'activity',dur:70},{ja:'郷土料理ディナー',en:'Regional dinner',type:'food',dur:90},{ja:'夜の川辺さんぽ',en:'Riverside night walk',type:'scenery',dur:40}]}}
@@ -139,44 +184,57 @@ const mkEv=(e)=>{e.uid=++UID;EVMAP[e.uid]=e;return e};
 const HOTEL_ALTS=[{ja:'節約案: 駅近ビジネスホテル',en:'Budget: business hotel'},{ja:'贅沢案: 5つ星ホテル',en:'Splurge: 5-star hotel'}];
 function mealAlts(dest,usedName){const others=dest.spots.filter(s=>s.type==='food'&&L(s)!==usedName).slice(0,2);
  return others.length?others.map(s=>({ja:s.ja,en:s.en})):[{ja:'駅ナカで軽く',en:'Quick station bite'},{ja:'ローカル食堂',en:'Local diner'}]}
+const toMin=(hm)=>{const m=String(hm).match(/(\d+):(\d+)/);return m?+m[1]*60+ +m[2]:900};
 function buildItinerary(dest,dayCount,opts={},form=state.form){
  const perDay=opts.perDay||3;const focus=opts.focus||null;
- const origin=form.origin||(state.lang==='ja'?'自宅（東京）':'Home (Tokyo)');
+ const origin=form.origin||(state.lang==='ja'?'出発地':'Origin');
  const goal=form.roundtrip===false&&form.goal?form.goal:origin;
  const longHaul=dest.travelMin>400;
  let pool=dest.spots.filter(s=>s.type!=='food');
  if(focus)pool=[...pool.filter(s=>s.type===focus),...pool.filter(s=>s.type!==focus)];
  const foods=dest.spots.filter(s=>s.type==='food');
  let si=0,fi=0;const nextSpot=()=>pool[si++%pool.length];const nextFood=()=>foods[fi++%foods.length];
+ const cityGo=(s)=>s.go||dest.cityMove||{ja:'市内移動（バス・地下鉄）約15分',en:'Local transit ~15 min',min:15};
+ const spotEv=(s,tm)=>({kind:'spot',icon:s.icon||TYPE_META[s.type].icon,time:tm,title:s,type:s.type,dur:s.dur,go:cityGo(s),sub:s.sub});
+ const mealEv=(f,tm,icon='🍽')=>({kind:'meal',icon,time:tm,title:f,type:'food',dur:f.dur,sub:f.near,alts:mealAlts(dest,L(f))});
  const days=[];
  for(let d=0;d<dayCount;d++){const day=[];const last=d===dayCount-1&&dayCount>1;
   const push=(e)=>day.push(mkEv(e));
-  if(d===0){const dep=opts.startLate?'09:30':'08:30';const depR=addMin(dep,15);
-   const arr=longHaul?(dest.arrLocal||'17:30'):addMin(depR,dest.travelMin);
-   push({kind:'depart',icon:'🏠',time:dep,title:{ja:`${origin} を出発`,en:`Leave ${origin}`},sub:{ja:'忘れ物チェック：チケットはアプリ内',en:'Tickets are in the app'}});
-   push({kind:'ride',icon:dest.mode,time:depR,title:dest.ride,sub:longHaul?{ja:`${depR}発 → 現地 ${arr} ${L(dest.station)}着（時差込み）`,en:`Dep ${depR} → Arr ${arr} local, ${L(dest.station)}`}:{ja:`${depR}発 → ${arr} ${L(dest.station)}着`,en:`Dep ${depR} → Arr ${arr} ${L(dest.station)}`}});
-   if(longHaul){
-    push({kind:'hotel',icon:'🏨',time:addMin(arr,60),title:dest.hotel,sub:{ja:'チェックイン・ひと休み',en:'Check-in & rest'},alts:HOTEL_ALTS});
-    const f1=nextFood();push({kind:'meal',icon:'🍽',time:addMin(arr,150),title:f1,sub:{ja:'初日は近場で軽めに',en:'Keep day 1 light & local'},alts:mealAlts(dest,L(f1)),dur:f1.dur});
+  if(d===0){const dep=dest.legs?addMin(dest.legs[0].dep,-40):(opts.startLate?'09:30':'08:30');
+   push({kind:'depart',icon:'🏠',time:dep,title:{ja:`${origin} を出発`,en:`Leave ${origin}`},sub:{ja:'チケット・QRはアプリ内',en:'Tickets & QR in the app'}});
+   let arr;
+   if(dest.legs){dest.legs.forEach(lg=>push({kind:'ride',icon:lg.icon,time:lg.dep,title:lg.name,sub:{ja:`${L(lg.from)} ${lg.dep}発 → ${lg.arr} ${L(lg.to)}着${lg.note?'・'+lg.note.ja:''}`,en:`${L(lg.from)} ${lg.dep} → ${lg.arr} ${L(lg.to)}${lg.note?' · '+lg.note.en:''}`}}));
+    arr=dest.legs[dest.legs.length-1].arr}
+   else{const depR=addMin(dep,15);arr=longHaul?(dest.arrLocal||'17:30'):addMin(depR,dest.travelMin);
+    push({kind:'ride',icon:dest.mode,time:depR,title:dest.ride,sub:longHaul?{ja:`${depR}発 → 現地 ${arr} ${L(dest.station)}着（時差込み）`,en:`Dep ${depR} → arr ${arr} local, ${L(dest.station)}`}:{ja:`${depR}発 → ${arr} ${L(dest.station)}着`,en:`Dep ${depR} → arr ${arr} ${L(dest.station)}`}})}
+   const arrM=toMin(arr);
+   if(longHaul||arrM>=17*60){
+    push({kind:'hotel',icon:'🏨',time:addMin(arr,45),title:dest.hotel,sub:{ja:'チェックイン・ひと休み',en:'Check-in & rest'},alts:HOTEL_ALTS});
+    push(mealEv(nextFood(),addMin(arr,120),'🌙'));
+   }else if(arrM>=13*60){
+    let tm=arr;const s=nextSpot();const g=cityGo(s);tm=addMin(tm,g.min);push(spotEv(s,tm));tm=addMin(tm,s.dur);
+    if(dayCount>1)push({kind:'hotel',icon:'🏨',time:'17:30',title:dest.hotel,sub:{ja:'チェックイン',en:'Check-in'},alts:HOTEL_ALTS});
+    push(mealEv(nextFood(),'19:00','🌙'));
    }else{
-    let tm=addMin(arr,20);
-    for(let i=0;i<Math.max(perDay-1,1);i++){const s=nextSpot();push({kind:'spot',icon:TYPE_META[s.type].icon,time:tm,title:s,type:s.type,dur:s.dur,walk:(i*7+11)%14+4});tm=addMin(tm,s.dur+25);
-     if(i===0){const f=nextFood();push({kind:'meal',icon:'🍽',time:tm,title:f,type:'food',dur:f.dur,alts:mealAlts(dest,L(f))});tm=addMin(tm,f.dur+20)}}
+    let tm=arr;
+    for(let i=0;i<Math.max(perDay-1,1);i++){const s=nextSpot();const g=cityGo(s);tm=addMin(tm,g.min);push(spotEv(s,tm));tm=addMin(tm,s.dur);
+     if(i===0){const f=nextFood();tm=addMin(tm,10);push(mealEv(f,tm));tm=addMin(tm,f.dur)}}
     if(dayCount>1)push({kind:'hotel',icon:'🏨',time:'17:30',title:dest.hotel,sub:{ja:'チェックイン・荷物を置く',en:'Check-in, drop bags'},alts:HOTEL_ALTS});
-    const f2=nextFood();push({kind:'meal',icon:'🌙',time:'19:00',title:f2,type:'food',dur:f2.dur,alts:mealAlts(dest,L(f2))});
+    push(mealEv(nextFood(),'19:00','🌙'));
    }
   }else if(!last){let tm=opts.startLate?'10:00':'09:00';
-   for(let i=0;i<perDay;i++){const s=nextSpot();push({kind:'spot',icon:TYPE_META[s.type].icon,time:tm,title:s,type:s.type,dur:s.dur,walk:(i*9+13)%16+4});tm=addMin(tm,s.dur+30);
-    if(i===0){const f=nextFood();push({kind:'meal',icon:'🍽',time:tm,title:f,type:'food',dur:f.dur,alts:mealAlts(dest,L(f))});tm=addMin(tm,f.dur+20)}}
-   const f3=nextFood();push({kind:'meal',icon:'🌙',time:'19:00',title:f3,type:'food',dur:f3.dur,alts:mealAlts(dest,L(f3))});
+   for(let i=0;i<perDay;i++){const s=nextSpot();const g=cityGo(s);if(i>0)tm=addMin(tm,g.min);push(spotEv(s,tm));tm=addMin(tm,s.dur);
+    if(i===0){const f=nextFood();tm=addMin(tm,10);push(mealEv(f,tm));tm=addMin(tm,f.dur)}}
+   push(mealEv(nextFood(),'19:00','🌙'));
    push({kind:'hotel',icon:'🏨',time:'21:30',title:dest.hotel,sub:{ja:'ホテルに戻る',en:'Back to hotel'}});
   }else{let tm='09:00';
    push({kind:'hotel',icon:'🧳',time:tm,title:{ja:'チェックアウト・荷物を預ける',en:'Check out, store luggage'},sub:dest.hotel});tm=addMin(tm,40);
-   const s=nextSpot();push({kind:'spot',icon:TYPE_META[s.type].icon,time:tm,title:s,type:s.type,dur:s.dur,walk:8});tm=addMin(tm,s.dur+30);
-   const f=nextFood();push({kind:'meal',icon:'🍽',time:tm,title:f,type:'food',dur:60,alts:mealAlts(dest,L(f))});
-   const depBack=longHaul?'15:00':'16:00';const arrBack=longHaul?(state.lang==='ja'?'翌日':'+1d'):addMin(depBack,dest.travelMin);
-   push({kind:'ride',icon:dest.mode,time:depBack,title:dest.ride,sub:longHaul?{ja:`${L(dest.station)} ${depBack}発 → 翌日 ${goal}着（時差込み）`,en:`${L(dest.station)} dep ${depBack} → arr next day (incl. time diff)`}:{ja:`${L(dest.station)} ${depBack}発 → ${arrBack}着`,en:`${L(dest.station)} dep ${depBack} → arr ${arrBack}`}});
-   push({kind:'depart',icon:'🏁',time:arrBack,title:{ja:`${goal} に到着`,en:`Arrive at ${goal}`},sub:{ja:'おつかれさま！アルバムが自動で整理されます',en:'Welcome back! Your album is auto-organized'}});
+   const s=nextSpot();const g=cityGo(s);tm=addMin(tm,g.min);push(spotEv(s,tm));tm=addMin(tm,s.dur);
+   push(mealEv(nextFood(),addMin(tm,10)));
+   const bk=dest.back;const depBack=bk?bk.dep:(longHaul?'15:00':'16:00');
+   const arrBack=bk?bk.arr:(longHaul?(state.lang==='ja'?'翌日':'+1d'):addMin(depBack,dest.travelMin));
+   push({kind:'ride',icon:dest.mode,time:depBack,title:bk?bk.name:dest.ride,sub:{ja:`${L(dest.station)} ${depBack}発 → ${arrBack} ${goal}着`,en:`${L(dest.station)} dep ${depBack} → arr ${arrBack}, ${goal}`}});
+   push({kind:'depart',icon:'🏁',time:String(arrBack).split(' ').pop(),title:{ja:`${goal} に到着`,en:`Arrive at ${goal}`},sub:{ja:'おつかれさま！アルバムが自動で整理されます',en:'Welcome back! Album auto-organized'}});
   }
   days.push(day)}
  return days}
@@ -186,18 +244,16 @@ function detourRecs(dest,days){const used=new Set();days.flat().forEach(e=>e.tit
  return rec}
 
 /* ================= 鳥瞰マップ（③） ================= */
-function birdMap(stops,active=-1){const P=[[42,152],[112,118],[176,148],[236,96],[292,126],[150,64],[84,74],[250,60]];
- const pts=stops.map((_,i)=>P[i%P.length]);
- const line=pts.map((p,i)=>`${i?'L':'M'}${p[0]},${p[1]}`).join(' ');
- const blocks=[[70,130,26,16],[150,90,30,18],[210,120,24,14],[110,60,22,14],[250,140,28,16],[30,100,20,12]]
-  .map(([x,y,w,h])=>`<g><rect x="${x}" y="${y-6}" width="${w}" height="${h}" class="bm-side"/><rect x="${x}" y="${y-12}" width="${w}" height="${h}" class="bm-top"/></g>`).join('');
+function birdMap(stops,active=-1,dest=null){
+ const DEF=[[40,160],[110,120],[180,160],[250,80],[300,120],[180,40],[110,40],[250,160]];
+ const src=(dest&&dest.mapPts)||DEF;
+ const pts=stops.map((_,i)=>src[i%src.length]);
+ let pathd='';pts.forEach((p,i)=>{if(!i)pathd=`M${p[0]},${p[1]}`;else{const q=pts[i-1];if(q[0]!==p[0])pathd+=` L${p[0]},${q[1]}`;if(q[1]!==p[1])pathd+=` L${p[0]},${p[1]}`}});
+ const blocks=[[55,95,36,18],[125,50,40,20],[195,95,36,18],[265,135,28,16],[55,45,30,16],[195,135,40,18],[265,50,28,16]]
+  .map(([x,y,w,h])=>`<g><rect x="${x}" y="${y+4}" width="${w}" height="${h}" class="bm-side"/><rect x="${x}" y="${y-4}" width="${w}" height="${h}" class="bm-top"/></g>`).join('');
  const pins=pts.map((p,i)=>`<g class="${i===active?'bm-pin on':'bm-pin'}"><circle cx="${p[0]}" cy="${p[1]}" r="${i===active?11:9}"/><text x="${p[0]}" y="${p[1]+3.5}">${i+1}</text></g>`).join('');
- return `<svg class="bmap" viewBox="0 0 320 190" aria-label="bird's-eye map"><g transform="skewX(-8)" transform-origin="160 95">
-  <rect x="-30" y="0" width="380" height="190" class="bm-ground"/>
-  ${[35,75,115,155].map(y=>`<line x1="-20" y1="${y}" x2="350" y2="${y}" class="bm-grid"/>`).join('')}
-  ${[40,110,180,250,320].map(x=>`<line x1="${x}" y1="0" x2="${x-24}" y2="190" class="bm-grid"/>`).join('')}
-  <path d="M-20 168 C60 150, 120 178, 200 158 S300 130, 350 140" class="bm-river"/>${blocks}</g>
-  <path d="${line}" class="bm-route"/>${pins}</svg>`}
+ const roads=[40,110,180,250,300].map(x=>`<line x1="${x}" y1="18" x2="${x}" y2="180" class="bm-road"/>`).join('')+[40,80,120,160].map(y=>`<line x1="18" y1="${y}" x2="308" y2="${y}" class="bm-road"/>`).join('');
+ return `<svg class="bmap" viewBox="0 0 320 190" aria-label="map"><rect width="320" height="190" class="bm-ground"/>${roads}<path d="M14 176 C80 166,160 184,240 170 S300 160,318 164" class="bm-river"/>${blocks}<path d="${pathd}" class="bm-route"/>${pins}</svg>`}
 
 /* ================= 見つける（⑬） ================= */
 const DISCOVER=[
@@ -258,8 +314,8 @@ let shioriDay=0;
 
 /* ================= 検索（②〜⑫の中核） ================= */
 function parseNights(){const f=state.form;
- if(f.from&&f.to){const n=Math.round((new Date(f.to)-new Date(f.from))/864e5);if(n>=0)return Math.min(n,3)}
- const m=f.vague.match(/(\d)\s*泊/);if(m)return Math.min(+m[1],3);
+ if(f.from&&f.to){const n=Math.round((new Date(f.to)-new Date(f.from))/864e5);if(n>=0)return Math.min(n,6)}
+ const m=f.vague.match(/(\d)\s*泊/);if(m)return Math.min(+m[1],6);
  if(/日帰り|day\s*trip/i.test(f.vague))return 0;return 2}
 function planPrice(dest,nights,mult=1){const n=Math.max(nights,1);
  return Math.round((dest.transport.price+dest.hotel.price*n+dest.act.price+3500*(nights+1))*mult/100)*100}
@@ -298,25 +354,27 @@ const chips=(items,sel,group)=>items.map(i=>`<button class="chip ${sel===i.id?'a
 const featTags=(d)=>d.feat.slice(0,3).map(f=>`<span>${L(FEAT_LABEL[f])}</span>`).join('');
 const toast=(m)=>{const el=$('#toast');el.querySelector('p').textContent=m;el.classList.add('show');clearTimeout(window.tt);window.tt=setTimeout(()=>el.classList.remove('show'),2200)};
 
-function evRow(e,idx){
+function evRow(e,idx,editable){
  if(e.kind==='walkrow')return '';
  const alts=e.alts?`<div class="alts"><small>${t('s.alt')}</small>${e.alts.map((a,i)=>`<button class="alt-chip" data-act="swap" data-uid="${e.uid}" data-i="${i}">⇄ ${L(a)}</button>`).join('')}</div>`:'';
- const walk=e.walk&&idx>0?`<div class="tr-row"><span></span><small>🚶 ${t('s.walk')} ${e.walk}${t('s.min')}</small></div>`:'';
+ const walk=e.go&&idx>0?`<div class="tr-row"><span></span><small>↳ ${L(e.go)}</small></div>`:'';
  const dur=e.dur?` · ${e.dur}${t('s.min')}`:'';
  const sub=e.sub?`<small>${L(e.sub)}${dur}</small>`:(e.type?`<small>${L(TYPE_META[e.type])}${dur}</small>`:'');
- return `${walk}<div class="ev k-${e.kind}"><time>${e.time}</time><i></i><div><b>${e.icon||''} ${L(e.title)}${e.detour?' <em class="detour-tag">寄り道</em>':''}</b>${sub}${alts}</div></div>`}
-const dayTimeline=(day)=>`<div class="timeline">${day.map((e,i)=>evRow(e,i)).join('')}</div>`;
+ return `${walk}<div class="ev k-${e.kind}"><time>${e.time}</time><i></i><div><b>${e.icon||''} ${L(e.title)}${e.detour?' <em class="detour-tag">寄り道</em>':''}</b>${sub}${alts}</div>${editable?`<button class="ev-edit" data-act="ev-edit" data-uid="${e.uid}">✎</button>`:''}</div>`}
+const dayTimeline=(day,editable)=>`<div class="timeline">${day.map((e,i)=>evRow(e,i,editable)).join('')}</div>`;
 const stopsOf=(day)=>day.filter(e=>['spot','meal'].includes(e.kind));
 
+let savedPlans=[];
 function screenPlan(){const tt=activeTrip;const d=destById(tt.destId)||makeGenericDest('旅');
- const myTrip=`<div class="trip-card" data-act="goto" data-val="shiori"><div class="trip-cover ${d.grad}">${sceneArt(d.scene)}<span class="badge-lime">${t('plan.active')}</span></div>
+ const saved=savedPlans.length?`<section class="block"><h2>🔖 ${t('p.saved')}</h2>${savedPlans.map((c,i)=>`<div class="exp saved-plan" data-act="open-saved" data-val="${i}"><span class="b-icon sm">${c.dest.emoji}</span><div><b>${L(c.dest)} — ${L(c.name)}</b><small>${t('r.nights',c.nights)} · ${yen(c.price)}〜</small></div><button class="mini-btn" data-act="del-saved" data-val="${i}">×</button></div>`).join('')}</section>`:'';
+ const myTrip=`<div class="trip-card" data-act="goto" data-val="shiori"><div class="trip-cover ${d.grad}">${coverArt(d)}<span class="badge-lime">${t('plan.active')}</span></div>
   <div class="trip-info"><b>${L(tt.title)}</b><small>${tt.dates} · ${tt.members.join(', ')}</small></div><span class="go">→</span></div>`;
  const results=state.results?`<section class="block" id="results"><h2>${t('plan.results')}</h2><div class="cands">${state.results.cands.map((c,i)=>`
-  <div class="cand ${c.dest.grad}" data-act="open-plan" data-val="${i}">${sceneArt(c.dest.scene)}<div class="cand-top"><span class="cand-emoji">${c.dest.emoji}</span><span class="cand-reason">✦ ${c.reason}</span></div>
+  <div class="cand ${c.dest.grad}" data-act="open-plan" data-val="${i}">${coverArt(c.dest)}<div class="cand-top"><span class="cand-emoji">${c.dest.emoji}</span><span class="cand-reason">✦ ${c.reason}</span></div>
    <div class="cand-body"><h3>${L(c.dest)}<span class="cand-sub">${L(c.name)}</span></h3><p>${L(c.desc)} · ${t('r.nights',c.nights)}</p><div class="cand-tags">${featTags(c.dest)}</div></div>
-   <div class="cand-foot"><b>${yen(c.price)}〜${c.overBudget?`<em class="over">${t('r.over')}</em>`:(state.form.budget?`<em class="fit">${t('r.fit')}</em>`:'')}</b><span class="mini-btn">${t('r.detail')} →</span></div></div>`).join('')}</div></section>`
+   <div class="cand-foot"><b>${yen(c.price)}〜${c.overBudget?`<em class="over">${t('r.over')}</em>`:(state.form.budget?`<em class="fit">${t('r.fit')}</em>`:'')}</b><span><button class="mini-btn" data-act="bm-plan" data-val="${i}">🔖</button> <span class="mini-btn">${t('r.detail')} →</span></span></div></div>`).join('')}</div></section>`
  :`<div class="card hint"><span>✦</span><p>${t('plan.empty')}</p></div>`;
- return `<section class="block"><h2>${t('plan.mytrips')}</h2>${myTrip}</section>${results}`}
+ return `<section class="block"><h2>${t('plan.mytrips')}</h2>${myTrip}</section>${saved}${results}`}
 
 function searchFormHTML(){const f=state.form;
  return `<div class="sheet-card form-sheet"><div class="sheet-bar"><b>✦ ${t('search.title')}</b><button class="close" data-act="close-search">×</button></div>
@@ -325,8 +383,9 @@ function searchFormHTML(){const f=state.form;
   <label class="f-label">${t('f.dest')}</label><input class="f-input" data-field="dest" value="${esc(f.dest)}" placeholder="${t('f.dest.ph')}">
   <label class="f-label">${t('f.vague')}</label><textarea class="f-input" rows="2" data-field="vague" placeholder="${t('f.vague.ph')}">${esc(f.vague)}</textarea>
   <label class="f-label">${t('f.origin')}</label>
-  <input class="f-input" data-field="origin" value="${esc(f.origin)}" placeholder="${t('f.origin.ph')}">
-  <div class="chips">${['home','airport','local'].map(k=>`<button class="chip" data-act="origin-quick" data-val="${k}">${t('f.origin.'+k)}</button>`).join('')}</div>
+  <input class="f-input" data-field="origin" list="placeList" value="${esc(f.origin)}" placeholder="${t('f.origin.ph')}">
+  <datalist id="placeList">${[...new Set(savedPlaces().concat(AIRPORTS))].map(a=>`<option value="${esc(a)}">`).join('')}</datalist>
+  <div class="chips">${savedPlaces().map((p,i)=>`<button class="chip" data-act="origin-place" data-val="${i}">📌 ${esc(p)}</button>`).join('')}<button class="chip" data-act="origin-gps">📍 ${t('f.origin.gps')}</button><button class="chip ghost" data-act="open-settings">⚙ ${t('set.edit')}</button></div>
   <label class="f-label">${t('f.goal')}</label>
   <div class="chips"><button class="chip ${f.roundtrip?'active':''}" data-act="toggle-round">${t('f.goal.round')}</button></div>
   ${f.roundtrip?'':`<input class="f-input" data-field="goal" value="${esc(f.goal)}" placeholder="${t('f.goal.ph')}">`}
@@ -357,7 +416,7 @@ function screenDiscover(){const items=disItems();
  <div class="chips scroll-x">${tagChips}</div>${seg}`;
  if(state.disMode==='shorts'){
   return `<section class="block">${head}<div class="shorts" id="shorts">${items.map(d=>{const s=disState[d.id];const dest=d.mine?null:destById(d.dest);
-   return `<div class="short ${d.grad}">${sceneArt(dest?dest.scene:'mountains')}<div class="short-shade"></div>
+   return `<div class="short ${d.grad}">${dest?coverArt(dest):sceneArt('mountains')}<div class="short-shade"></div>
     <div class="short-copy"><small>⌖ ${dest?L(dest):L(d.title)} · ${d.views||'0'}${t('d.views')}</small><h3>${L(d.title)}</h3><p><b>${d.author||'@you'}</b> ${d.cap?L(d.cap):''}</p></div>
     <div class="short-rail"><button data-act="like" data-val="${d.id}">${s.liked?'♥':'♡'}<small>${(d.likes+(s.liked?1:0)).toLocaleString()}</small></button>
      <button data-act="bm" data-val="${d.id}">${s.bmed?'▰':'▱'}<small>${d.bm+(s.bmed?1:0)}</small></button>
@@ -365,7 +424,7 @@ function screenDiscover(){const items=disItems();
      <button class="rail-add" data-act="add-spot" data-val="${d.id}">＋<small>plan</small></button></div>
     <span class="play-big">▶</span></div>`}).join('')||`<p class="empty">🔍</p>`}</div></section>`}
  return `<section class="block">${head}<div class="dis-grid" id="disGrid">${items.map(d=>{const s=disState[d.id];const dest=d.mine?null:destById(d.dest);const tag=d.tag||TYPE2TAG[d.type]||'view';
-  return `<div class="dis-card"><div class="dis-cover ${d.grad}">${sceneArt(dest?dest.scene:'mountains')}<span class="play">▶</span><span class="dis-type">${L(USE_TAGS.find(u=>u.id===tag))}</span></div>
+  return `<div class="dis-card"><div class="dis-cover ${d.grad}">${dest?coverArt(dest):sceneArt('mountains')}<span class="play">▶</span><span class="dis-type">${L(USE_TAGS.find(u=>u.id===tag))}</span></div>
    <div class="dis-body"><b>${L(d.title)}</b><small>⌖ ${dest?L(dest):'—'} · ${d.views||'0'}${t('d.views')}</small>
     <div class="dis-actions"><button class="pill ${s.liked?'on':''}" data-act="like" data-val="${d.id}">${s.liked?'♥':'♡'} ${(d.likes+(s.liked?1:0)).toLocaleString()}</button>
      <button class="pill ${s.bmed?'on':''}" data-act="bm" data-val="${d.id}">${s.bmed?'▰':'▱'} ${d.bm+(s.bmed?1:0)}</button>
@@ -379,14 +438,14 @@ function settleInfo(){const list=activeTrip.expenses.filter(x=>state.paypayOn||x
  const transfer=debt[0]&&debt[0].d>0?{from:debt[0].m,to:debt[debt.length-1].m,amt:debt[0].d}:null;
  return{list,total,per,transfer}}
 function screenShiori(){const tt=activeTrip;const d=destById(tt.destId)||makeGenericDest(L(tt.title));
- const head=`<div class="sh-head ${d.grad}">${sceneArt(d.scene)}<div class="sh-head-in"><span class="badge-lock">${t('sh.closed')}</span><h2>${L(tt.title)}</h2><p>${tt.dates}</p>
+ const head=`<div class="sh-head ${d.grad}">${coverArt(d)}<div class="sh-head-in"><span class="badge-lock">${t('sh.closed')}</span><h2>${L(tt.title)}</h2><p>${tt.dates}</p>
   <div class="sh-members">${tt.members.map(m=>`<span class="avatar sm">${m[0]}</span>`).join('')}<small>${tt.members.join(' · ')}</small></div></div></div>
  <div class="invite-row"><div><small>${t('sh.invite')} · ${t('sh.closed.note')}</small><b>${tt.invite}</b></div><button class="mini-btn" data-act="copy-invite">${t('sh.copy')}</button></div>`;
  const tabs=`<div class="seg">${[['itin',t('sh.itin')],['album',t('sh.album')],['split',t('sh.split')],['diary',t('sh.diary')]].map(([id,l])=>`<button class="${state.shioriTab===id?'active':''}" data-act="sh-tab" data-val="${id}">${l}</button>`).join('')}</div>`;
  let body='';
  if(state.shioriTab==='itin'){const dayChips=tt.days.map((_,i)=>`<button class="chip ${shioriDay===i?'active':''}" data-act="sh-day" data-val="${i}">DAY ${i+1}</button>`).join('');
   const extra=tt.extra.length?`<div class="extra"><small>✦ ${t('s.added')}</small>${tt.extra.map(x=>`<span class="chip">＋ ${L(x.title)}</span>`).join('')}</div>`:'';
-  body=`<div class="chips">${dayChips}</div>${dayTimeline(tt.days[shioriDay])}${extra}<button class="primary-btn" data-act="open-nav" data-val="${shioriDay}"><span>${t('nav.start')}</span><b>→</b></button>`}
+  body=`<div class="chips">${dayChips}</div>${dayTimeline(tt.days[shioriDay],true)}${extra}<button class="outline-btn" data-act="ev-add">${t('ev.add')}</button><button class="primary-btn" data-act="open-nav" data-val="${shioriDay}"><span>${t('nav.start')}</span><b>→</b></button>`}
  if(state.shioriTab==='album'){body=`<div class="album">${tt.album.map(a=>`<div class="al-tile ${a.grad}"><span>${a.emoji}</span><small>${L(a.label)}</small></div>`).join('')}
   <button class="al-add" data-act="add-photo">${t('sh.addphoto')}</button></div>`}
  if(state.shioriTab==='split'){const si=settleInfo();
@@ -423,7 +482,7 @@ function renderSheet(){const c=sheet.cand;if(!c)return;const d=c.dest;const days
  let body='';
  if(sheet.tab==='itin')body=`<div class="chips">${dayChips}</div>${dayTimeline(days[sheet.day])}`;
  if(sheet.tab==='route'){const stops=stopsOf(days[sheet.day]);
-  body=`<div class="chips">${dayChips}</div><p class="note">🗺 ${t('s.map')}</p>${birdMap(stops)}
+  body=`<div class="chips">${dayChips}</div><p class="note">🗺 ${t('s.map')}</p><p class="apinote">※ プロトタイプの簡易地図。実装時はGoogle Maps APIの実地図・経路に置換</p>${birdMap(stops,-1,d)}
   <div class="route">${stops.map((s,i)=>`<div class="r-stop"><span class="r-pin">${i+1}</span><b>${L(s.title)}</b></div>${i<stops.length-1?`<div class="r-leg"><i></i><small>${i%2?t('s.bus'):t('s.walk')} · ${(i*7+13)%20+6}${t('s.min')}</small></div>`:''}`).join('')}</div>
   ${detourCards(d,days,'add-detour')}`}
  if(sheet.tab==='book'){const nights=Math.max(c.nights,1);const rows=[
@@ -434,7 +493,7 @@ function renderSheet(){const c=sheet.cand;if(!c)return;const d=c.dest;const days
   body=`<p class="note">✦ ${t('s.booknote')}</p>${rows.map(r=>`<div class="exp"><span class="b-icon sm">${r.icon}</span><div><b>${r.name}</b><small>${r.qty}</small></div><b>${yen(r.amt)}</b></div>`).join('')}
   <div class="settle"><div class="s-row hl"><span>${t('s.total')}</span><b>${yen(total)}</b></div></div>`}
  $('#planSheet').innerHTML=`<div class="sheet-card">
-  <div class="sheet-cover ${d.grad}">${sceneArt(d.scene)}<button class="close" data-act="close-sheet">×</button>
+  <div class="sheet-cover ${d.grad}">${coverArt(d)}<button class="close" data-act="close-sheet">×</button>
    <div class="sheet-title"><small>${L(d)} · ${t('r.nights',c.nights)} · ${L(c.name)}</small><h2>${L(d)}<span> — ${L(c.name)}</span></h2><b>${yen(c.price)}〜 <small>/ ${state.lang==='ja'?'人':'person'}</small>${c.overBudget?`<em class="over">${t('r.over')}</em>`:''}</b></div></div>
   <div class="seg">${[['itin',t('s.itin')],['route',t('s.route')],['book',t('s.book')]].map(([id,l])=>`<button class="${sheet.tab===id?'active':''}" data-act="sheet-tab" data-val="${id}">${l}</button>`).join('')}</div>
   <div class="sheet-body">${body}</div>
@@ -456,7 +515,7 @@ function renderNav(){const tt=activeTrip;const d=destById(tt.destId)||makeGeneri
   <div class="sheet-bar dark"><b>🧭 DAY ${nav.day+1} ${t('nav.title')}</b><button class="close" data-act="close-nav">×</button></div>
   <div class="nav-instr"><span class="nav-arrow">${st.arrow}</span><div><b>${L(st)}</b><small>${st.d}</small></div></div>
   <div class="nav-progress"><i style="width:${Math.round((nav.step+1)/steps.length*100)}%"></i></div>
-  ${birdMap(stops,activeStop)}
+  ${birdMap(stops,activeStop,d)}
   <div class="nav-stats"><div><small>${t('nav.eta')}</small><b>${eta}</b></div><div><small>${t('nav.left')}</small><b>${Math.max(steps.length-1-nav.step,0)} step</b></div><div><small>Σ</small><b>${(stops.length*0.9).toFixed(1)} km</b></div></div>
   <div class="f-row nav-btns"><button class="outline-btn" data-act="nav-restart">${t('nav.restart')}</button><button class="primary-btn" data-act="nav-next" style="margin-top:12px"><span>${t('nav.next')}</span><b>→</b></button></div>
   <div class="sheet-body">${detourCards(d,tt.days,'add-detour-nav')}</div></div>`}
@@ -468,6 +527,25 @@ function openArticle(id){const x=TIPS.find(a=>a.id===id);
   <div class="sheet-body art-body"><h1>${L(x.title)}</h1><p class="lead">${L(x.lead)}</p>
   ${x.article.map(s=>`<h3>${L(s.h)}</h3><p>${L(s.p)}</p>`).join('')}
   ${x.pr?`<p class="prnote">${t('tips.prnote')}</p>`:''}</div></div>`;
+ $('#subSheet').classList.add('open')}
+function openEvEdit(uid){const e=EVMAP[uid];if(!e)return;
+ $('#subSheet').innerHTML=`<div class="sheet-card">
+  <div class="sheet-bar"><b>✎ ${t('ev.edit')}</b><button class="close" data-act="close-sub">×</button></div>
+  <div class="sheet-body">
+   <label class="f-label">${t('ev.name')}</label><input class="f-input" id="evName" value="${esc(L(e.title))}">
+   <label class="f-label">${t('ev.time')}</label><input class="f-input" type="time" id="evTime" value="${/^\d\d:\d\d$/.test(e.time)?e.time:'12:00'}">
+   <button class="outline-btn danger" data-act="ev-del" data-uid="${uid}">🗑 ${t('ev.del')}</button>
+  </div>
+  <div class="sheet-foot"><button class="primary-btn" data-act="ev-save" data-uid="${uid}"><span>${t('ev.save')}</span><b>→</b></button></div></div>`;
+ $('#subSheet').classList.add('open')}
+function openSettings(){
+ $('#subSheet').innerHTML=`<div class="sheet-card">
+  <div class="sheet-bar"><b>⚙ ${t('set.title')}</b><button class="close" data-act="close-sub">×</button></div>
+  <div class="sheet-body"><p class="form-sub">${t('set.note')}</p>
+   ${savedPlaces().map((p,i)=>`<div class="exp"><span class="b-icon sm">📌</span><div><b>${esc(p)}</b></div><button class="mini-btn" data-act="set-del" data-val="${i}">×</button></div>`).join('')}
+   <label class="f-label">${t('set.add')}</label>
+   <div class="f-row"><input class="f-input" id="setNew" placeholder="${t('set.ph')}"><button class="mini-btn" data-act="set-add">${t('set.add')}</button></div>
+  </div></div>`;
  $('#subSheet').classList.add('open')}
 function openEditor(){editor={clips:[],caption:'',tag:'view'};renderEditor();$('#subSheet').classList.add('open')}
 function renderEditor(){
@@ -497,12 +575,19 @@ document.addEventListener('click',(e)=>{const el=e.target.closest('[data-act],.t
   case 'chip':{const g=el.dataset.group;state.form[g]=state.form[g]===val?'':val;refreshSearch();break}
   case 'toggle-tbd':state.form.tbd=!state.form.tbd;if(state.form.tbd){state.form.from='';state.form.to=''}refreshSearch();break;
   case 'toggle-round':state.form.roundtrip=!state.form.roundtrip;refreshSearch();break;
-  case 'origin-quick':{state.form.origin={home:state.lang==='ja'?'自宅（東京）':'Home (Tokyo)',airport:state.lang==='ja'?'羽田空港':'Haneda Airport',local:state.lang==='ja'?'現地集合':'Meet locally'}[val];refreshSearch();break}
+  case 'origin-place':state.form.origin=savedPlaces()[+val]||'';refreshSearch();break;
+  case 'origin-gps':{if(navigator.geolocation){navigator.geolocation.getCurrentPosition(pos=>{state.form.origin=`現在地（${pos.coords.latitude.toFixed(3)}, ${pos.coords.longitude.toFixed(3)}）`;toast(t('toast.gps.ok'));refreshSearch()},()=>toast(t('toast.gps.ng')),{timeout:5000})}else toast(t('toast.gps.ng'));break}
+  case 'open-settings':openSettings();break;
+  case 'set-del':{const a=savedPlaces();a.splice(+val,1);setPlaces(a);openSettings();break}
+  case 'set-add':{const v=($('#setNew')||{}).value;if(v&&v.trim()){const a=savedPlaces();a.push(v.trim());setPlaces(a);toast(t('toast.place'));openSettings()}break}
   case 'people':state.form.people=Math.min(9,Math.max(1,state.form.people+ +val));refreshSearch();break;
   case 'open-search':case undefined:break;
   case 'search':$('#searchSheet').classList.remove('open');state.screen='plan';searchPlans();setTimeout(()=>{const r=$('#results');if(r)r.scrollIntoView({behavior:'smooth'})},60);break;
   case 'close-search':$('#searchSheet').classList.remove('open');break;
   case 'open-plan':openPlanSheet(+val);break;
+  case 'bm-plan':{savedPlans.push(state.results.cands[+val]);toast(t('toast.bmplan'));render();break}
+  case 'open-saved':{const c=savedPlans[+val];sheet={cand:c,tab:'itin',day:0,days:buildItinerary(c.dest,c.days,c.opts)};renderSheet();$('#planSheet').classList.add('open');break}
+  case 'del-saved':savedPlans.splice(+val,1);render();break;
   case 'sheet-tab':sheet.tab=val;renderSheet();break;
   case 'sheet-day':sheet.day=+val;renderSheet();break;
   case 'close-sheet':$('#planSheet').classList.remove('open');break;
@@ -522,8 +607,8 @@ document.addEventListener('click',(e)=>{const el=e.target.closest('[data-act],.t
   case 'goto':state.screen=val;render();window.scrollTo({top:0});break;
   case 'dis-tag':state.disTag=val;render();break;
   case 'dis-mode':state.disMode=val;render();break;
-  case 'like':{const s=disState[+val];s.liked=!s.liked;toast(t(s.liked?'toast.liked':'toast.unliked'));render();break}
-  case 'bm':{const s=disState[+val];s.bmed=!s.bmed;toast(t(s.bmed?'toast.bm':'toast.unbm'));render();break}
+  case 'like':{const s=disState[+val];s.liked=!s.liked;toast(t(s.liked?'toast.liked':'toast.unliked'));updateReact(+val);break}
+  case 'bm':{const s=disState[+val];s.bmed=!s.bmed;toast(t(s.bmed?'toast.bm':'toast.unbm'));updateReact(+val);break}
   case 'share-short':toast(t('toast.share'));break;
   case 'add-spot':{const d=DISCOVER.find(x=>x.id===+val);activeTrip.extra.push(d);toast(t('toast.addplan',L(d.title)));break}
   case 'open-editor':openEditor();break;
@@ -534,6 +619,10 @@ document.addEventListener('click',(e)=>{const el=e.target.closest('[data-act],.t
    DISCOVER.unshift({id:Date.now(),mine:true,title:{ja:editor.caption||'わたしの旅ショート',en:editor.caption||'My travel short'},dest:activeTrip.destId==='generic'?'kyoto':activeTrip.destId,type:'scenery',tag:editor.tag,likes:0,bm:0,views:'0',grad:a.grad,emoji:a.emoji,author:'@you',cap:{ja:'いま公開しました',en:'Just published'}});
    disState[DISCOVER[0].id]={liked:false,bmed:false};$('#subSheet').classList.remove('open');state.screen='discover';state.disMode='shorts';toast(t('toast.post'));render();break}
   case 'open-article':openArticle(val);break;
+  case 'ev-edit':openEvEdit(+el.dataset.uid);break;
+  case 'ev-save':{const e=EVMAP[+el.dataset.uid];if(e){const nm=($('#evName')||{}).value,tm=($('#evTime')||{}).value;if(nm)e.title={ja:nm,en:nm};if(tm)e.time=tm;activeTrip.days[shioriDay].sort((a,b)=>toMin(a.time)-toMin(b.time));$('#subSheet').classList.remove('open');toast(t('toast.evsave'));render()}break}
+  case 'ev-del':{const uid=+el.dataset.uid;const day=activeTrip.days[shioriDay];const ix=day.findIndex(x=>x.uid===uid);if(ix>=0)day.splice(ix,1);$('#subSheet').classList.remove('open');toast(t('toast.evdel'));render();break}
+  case 'ev-add':{const ev=mkEv({kind:'spot',icon:'📍',time:'15:00',title:{ja:'新しいスポット',en:'New spot'},type:'activity',dur:60});activeTrip.days[shioriDay].push(ev);openEvEdit(ev.uid);break}
   case 'sh-tab':state.shioriTab=val;render();break;
   case 'sh-day':shioriDay=+val;render();break;
   case 'open-nav':openNav(+val);break;
@@ -548,6 +637,9 @@ document.addEventListener('click',(e)=>{const el=e.target.closest('[data-act],.t
   case 'add-diary':{const v=($('#diaryInput')||{}).value;if(v&&v.trim()){activeTrip.diary.push({d:shioriDay+1,time:new Date().toTimeString().slice(0,5),who:'Koki',text:{ja:v.trim(),en:v.trim()}});toast(t('toast.diary'));render()}break}
   case 'tip-cat':tipCat=val;render();break;
  }});
+function updateReact(id){const d=DISCOVER.find(x=>x.id===id);const st=disState[id];
+ $$(`[data-act="like"][data-val="${id}"]`).forEach(b=>{const n=(d.likes+(st.liked?1:0)).toLocaleString();b.classList.toggle('on',st.liked);b.innerHTML=b.classList.contains('pill')?`${st.liked?'♥':'♡'} ${n}`:`${st.liked?'♥':'♡'}<small>${n}</small>`});
+ $$(`[data-act="bm"][data-val="${id}"]`).forEach(b=>{const n=d.bm+(st.bmed?1:0);b.classList.toggle('on',st.bmed);b.innerHTML=b.classList.contains('pill')?`${st.bmed?'▰':'▱'} ${n}`:`${st.bmed?'▰':'▱'}<small>${n}</small>`})}
 function refreshSearch(){if($('#searchSheet').classList.contains('open')){$('#searchSheet').innerHTML=searchFormHTML()}else render()}
 $('#langBtn').addEventListener('click',()=>{state.lang=state.lang==='ja'?'en':'ja';render();
  if($('#searchSheet').classList.contains('open'))$('#searchSheet').innerHTML=searchFormHTML();
