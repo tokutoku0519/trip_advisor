@@ -380,3 +380,65 @@ input[type="time"].f-input,input[type="date"].f-input{-webkit-appearance:none;ap
 .taxi-btn{margin-top:14px;background:linear-gradient(100deg,#f5a623,#f77f00);box-shadow:0 8px 20px rgba(245,166,35,.25)}
 .taxi .chip{background:#2b2d38;border-color:#3a3d49;color:#c8ccda}
 .taxi .chip.active{background:#40434f;border-color:#6b6f80;color:#fff}
+
+/* Googleマップ風 実地図イメージ */
+.bmap{background:#e8eaed}
+.gm-land{fill:#e8eaed}
+.gm-water{fill:#a3ccf0}
+.gm-park{fill:#c6e6a5;opacity:.85}
+.gm-area{fill:#5b8a3a;font-size:7px;font-weight:600;text-anchor:middle;opacity:.8}
+.gm-road-cas{stroke:#d4d6db;stroke-width:6;stroke-linecap:round}
+.gm-road{stroke:#fff;stroke-width:4;stroke-linecap:round}
+.gm-art-cas{stroke:#e6c46a;stroke-width:10;stroke-linecap:round}
+.gm-art{stroke:#fff7e0;stroke-width:7;stroke-linecap:round}
+.gm-route-cas{fill:none;stroke:#fff;stroke-width:9;stroke-linecap:round;stroke-linejoin:round}
+.gm-route{fill:none;stroke:#4285f4;stroke-width:5.5;stroke-linecap:round;stroke-linejoin:round}
+.gm-pin circle{fill:#ea4335;stroke:#fff;stroke-width:2}
+.gm-pin.end circle{fill:#188038}
+.gm-pin.on circle{fill:#1a73e8}
+.gm-pin text{fill:#fff;font-size:9px;font-weight:700;text-anchor:middle}
+.gm-label rect{fill:rgba(255,255,255,.92);stroke:#e0e0e0;stroke-width:.5}
+.gm-label text{fill:#3c4043;font-size:9px;font-weight:600}
+.gm-attr rect{fill:rgba(255,255,255,.72)}
+.gm-attr text{fill:#8a8e94;font-size:6.5px}
+/* カバーを実写風に（大気・奥行き・ビネット） */
+.cand::before,.sheet-cover::before,.sh-head::before,.trip-cover::before,.short::before,.dis-cover::before{
+ content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+ background:radial-gradient(130% 80% at 72% 14%,rgba(255,240,214,.22),transparent 46%),linear-gradient(180deg,rgba(6,8,18,.05) 30%,rgba(6,8,18,.5))}
+.scene{filter:saturate(1.2) contrast(1.08)}
+.scene .sil{fill:rgba(10,12,24,.62)}
+.cand .scene,.sheet-cover .scene,.sh-head .scene{opacity:.7}
+
+/* Googleマップ経路表示風（ルートタブ） */
+.gmd-head{display:flex;justify-content:space-between;align-items:center;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 15px;margin:6px 0 10px}
+.gmd-head b{font-size:19px}.gmd-head small{display:block;font-size:10px;color:var(--muted);margin-top:2px}
+.gmd-modes{font-size:14px;letter-spacing:3px}
+.gmd{margin-top:12px}
+.gmd-stop{display:flex;align-items:flex-start;gap:12px}
+.gmd-dot{flex:none;width:14px;height:14px;border-radius:50%;border:3px solid #9aa0ac;background:#fff;margin-top:2px}
+.gmd-dot.start{border-color:#1a73e8;background:#1a73e8}
+.gmd-dot.end{border-color:#188038;background:#188038}
+.gmd-place b{font-size:13px}.gmd-place small{display:block;font-size:9px;color:#9295a0;margin-top:1px}
+.gmd-leg{display:flex;gap:12px;align-items:center;min-height:38px}
+.gmd-rail{flex:none;width:14px;display:flex;justify-content:center}
+.gmd-rail::before{content:"";width:4px;border-radius:2px;height:38px;background:repeating-linear-gradient(#c7cad3 0 3px,transparent 3px 7px)}
+.gmd-rail.bus::before{background:#00a0c6;width:5px}
+.gmd-leg-info{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.gmd-mode{font-size:13px}
+.gmd-mode.bus{background:#e6f6fb;border-radius:6px;padding:1px 4px}
+.gmd-leg-info b{font-size:11px}
+.gmd-leg-info small{font-size:9px;color:#9295a0}
+
+/* Tesla/AMap風ナビ */
+.nav-arrow.big{width:66px;height:66px;border-radius:18px;font-size:38px;line-height:66px}
+.nav-itxt{display:flex;flex-direction:column;gap:2px}
+.nav-dist{font-size:30px;line-height:1;letter-spacing:-1px}
+.nav-dist i{font-size:15px;font-style:normal;font-weight:600;margin-left:3px;opacity:.8}
+.nav-dist.arr{font-size:20px}
+.nav-itxt span{font-size:12px;color:#c3c7d4}
+.nav-then{display:flex;align-items:center;gap:8px;margin:0 18px 6px;padding:8px 12px;background:#2b2d38;border-radius:12px;font-size:11px;color:#aeb3c2}
+.nav-then span{font-size:16px;color:#5aa0ff}
+.lanes{display:flex;justify-content:center;gap:10px;margin:8px 18px 0;padding:8px;background:#1a1c24;border-radius:12px}
+.lane{width:30px;height:30px;border-radius:8px;background:#2b2d38;color:#5b6072;display:grid;place-items:center;font-size:17px}
+.lane.on{background:#3b82f6;color:#fff;box-shadow:0 4px 12px rgba(59,130,246,.4)}
+.sv-edge{stroke:#eceef4;stroke-width:3;opacity:.85}

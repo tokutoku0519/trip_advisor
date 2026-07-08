@@ -259,16 +259,37 @@ function detourRecs(dest,days){const used=new Set();days.flat().forEach(e=>e.tit
  return rec}
 
 /* ================= 鳥瞰マップ（③） ================= */
+// Googleマップ風の実地図イメージ（デモ用。実装時はGoogle Maps JS/Static APIに置換）
 function birdMap(stops,active=-1,dest=null){
- const DEF=[[40,160],[110,120],[180,160],[250,80],[300,120],[180,40],[110,40],[250,160]];
+ const VX=[40,112,184,256,312],VY=[38,82,126,164];
+ const DEF=[[40,164],[112,126],[184,164],[256,82],[312,126],[184,38],[112,38],[256,164]];
  const src=(dest&&dest.mapPts)||DEF;
  const pts=stops.map((_,i)=>src[i%src.length]);
- let pathd='';pts.forEach((p,i)=>{if(!i)pathd=`M${p[0]},${p[1]}`;else{const q=pts[i-1];if(q[0]!==p[0])pathd+=` L${p[0]},${q[1]}`;if(q[1]!==p[1])pathd+=` L${p[0]},${p[1]}`}});
- const blocks=[[55,95,36,18],[125,50,40,20],[195,95,36,18],[265,135,28,16],[55,45,30,16],[195,135,40,18],[265,50,28,16]]
-  .map(([x,y,w,h])=>`<g><rect x="${x}" y="${y+4}" width="${w}" height="${h}" class="bm-side"/><rect x="${x}" y="${y-4}" width="${w}" height="${h}" class="bm-top"/></g>`).join('');
- const pins=pts.map((p,i)=>`<g class="${i===active?'bm-pin on':'bm-pin'}"><circle cx="${p[0]}" cy="${p[1]}" r="${i===active?11:9}"/><text x="${p[0]}" y="${p[1]+3.5}">${i+1}</text></g>`).join('');
- const roads=[40,110,180,250,300].map(x=>`<line x1="${x}" y1="18" x2="${x}" y2="180" class="bm-road"/>`).join('')+[40,80,120,160].map(y=>`<line x1="18" y1="${y}" x2="308" y2="${y}" class="bm-road"/>`).join('');
- return `<svg class="bmap" viewBox="0 0 320 190" aria-label="map"><rect width="320" height="190" class="bm-ground"/>${roads}<path d="M14 176 C80 166,160 184,240 170 S300 160,318 164" class="bm-river"/>${blocks}<path d="${pathd}" class="bm-route"/>${pins}</svg>`}
+ // ルートは道路グリッドに沿ってL字（マンハッタン）で結ぶ
+ let pathd='';pts.forEach((p,i)=>{if(!i)pathd=`M${p[0]},${p[1]}`;else{const q=pts[i-1];pathd+=` L${p[0]},${q[1]} L${p[0]},${p[1]}`}});
+ const arterialsV=[112,256],arterialsH=[82];
+ const minorV=VX.filter(x=>!arterialsV.includes(x)),minorH=VY.filter(y=>!arterialsH.includes(y));
+ const line=(x1,y1,x2,y2,cls)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" class="${cls}"/>`;
+ const roadsCasing=[...minorV.map(x=>line(x,14,x,182,'gm-road-cas')),...minorH.map(y=>line(14,y,318,y,'gm-road-cas')),
+   ...arterialsV.map(x=>line(x,14,x,182,'gm-art-cas')),...arterialsH.map(y=>line(14,y,318,y,'gm-art-cas'))].join('');
+ const roadsFill=[...minorV.map(x=>line(x,14,x,182,'gm-road')),...minorH.map(y=>line(14,y,318,y,'gm-road')),
+   ...arterialsV.map(x=>line(x,14,x,182,'gm-art')),...arterialsH.map(y=>line(14,y,318,y,'gm-art'))].join('');
+ // 地名ラベル（実際のスポット名を地図上に出す＝実地図っぽさ）
+ const labels=pts.map((p,i)=>{const nm=stops[i]&&stops[i].title?L(stops[i].title):'';const t=nm.length>7?nm.slice(0,7)+'…':nm;
+   const right=p[0]<250;const lx=right?p[0]+13:p[0]-13-t.length*8.4;const w=t.length*8.4+8;
+   return t?`<g class="gm-label"><rect x="${lx-4}" y="${p[1]-8}" width="${w}" height="16" rx="4"/><text x="${lx}" y="${p[1]+4}" text-anchor="start">${esc(t)}</text></g>`:''}).join('');
+ const pins=pts.map((p,i)=>{const on=i===active;const last=i===pts.length-1;
+   return `<g class="gm-pin ${on?'on':''} ${last?'end':''}"><circle cx="${p[0]}" cy="${p[1]}" r="${on?10:8.5}"/><text x="${p[0]}" y="${p[1]+3.4}">${i+1}</text></g>`}).join('');
+ return `<svg class="bmap" viewBox="0 0 320 190" aria-label="map">
+  <rect width="320" height="190" class="gm-land"/>
+  <path d="M-4 150 C60 138,120 168,190 150 S300 128,324 140 L324 190 L-4 190 Z" class="gm-water"/>
+  <ellipse cx="70" cy="52" rx="42" ry="26" class="gm-park"/><ellipse cx="270" cy="150" rx="40" ry="24" class="gm-park"/>
+  <text x="70" y="54" class="gm-area">◍ 公園</text>
+  ${roadsCasing}${roadsFill}
+  <path d="${pathd}" class="gm-route-cas"/><path d="${pathd}" class="gm-route"/>
+  ${labels}${pins}
+  <g class="gm-attr"><rect x="228" y="176" width="92" height="14"/><text x="232" y="186">Map · tabi demo</text></g>
+ </svg>`}
 
 /* ================= 見つける（⑬） ================= */
 const DISCOVER=[
@@ -518,8 +539,16 @@ function renderSheet(){const c=sheet.cand;if(!c)return;const d=c.dest;const days
  let body='';
  if(sheet.tab==='itin')body=`<div class="chips">${dayChips}</div>${dayTimeline(days[sheet.day])}`;
  if(sheet.tab==='route'){const stops=stopsOf(days[sheet.day]);
-  body=`<div class="chips">${dayChips}</div><p class="note">🗺 ${t('s.map')}</p><p class="apinote">※ プロトタイプの簡易地図。実装時はGoogle Maps APIの実地図・経路に置換</p>${birdMap(stops,-1,d)}
-  <div class="route">${stops.map((s,i)=>`<div class="r-stop"><span class="r-pin">${i+1}</span><b>${L(s.title)}</b></div>${i<stops.length-1?`<div class="r-leg"><i></i><small>${i%2?t('s.bus'):t('s.walk')} · ${(i*7+13)%20+6}${t('s.min')}</small></div>`:''}`).join('')}</div>
+  const legMin=(i)=>(i*7+13)%20+6;const totalMin=stops.slice(0,-1).reduce((a,_,i)=>a+legMin(i),0);const totalKm=(stops.length*0.9).toFixed(1);
+  const modeIcon={walk:'🚶',bus:'🚌',train:'🚃'};
+  const gmd=stops.map((s,i)=>{const node=`<div class="gmd-stop"><span class="gmd-dot ${i===0?'start':i===stops.length-1?'end':''}">${i===0?'':i===stops.length-1?'':''}</span><div class="gmd-place"><b>${L(s.title)}</b><small>${i===0?(state.lang==='ja'?'出発':'Start'):i===stops.length-1?(state.lang==='ja'?'到着':'Arrive'):(s.go?L(s.go):'')}</small></div></div>`;
+   if(i>=stops.length-1)return node;const bus=i%2===1;const mn=legMin(i);const busno=[206,100,5,4][i%4];
+   const leg=`<div class="gmd-leg"><span class="gmd-rail ${bus?'bus':'walk'}"></span><div class="gmd-leg-info"><span class="gmd-mode ${bus?'bus':''}">${bus?modeIcon.bus:modeIcon.walk}</span><b>${bus?`市バス${busno}系統`:t('s.walk')}</b><small>${mn}${t('s.min')} · ${Math.round(mn*(bus?230:75))}m</small></div></div>`;
+   return node+leg}).join('');
+  body=`<div class="chips">${dayChips}</div>
+  <div class="gmd-head"><div><b>${totalMin}${t('s.min')}</b><small>${totalKm} km · ${state.lang==='ja'?'徒歩・バス':'walk & bus'}</small></div><span class="gmd-modes">🚶 🚌 🚶</span></div>
+  ${birdMap(stops,-1,d)}<p class="apinote">※ ${state.lang==='ja'?'イメージ（デモ）。本番はGoogle Mapsの実経路':'Demo image; real routes via Google Maps'}</p>
+  <div class="gmd">${gmd}</div>
   ${detourCards(d,days,'add-detour')}`}
  if(sheet.tab==='book'){const nights=Math.max(c.nights,1);const rows=[
    {icon:d.mode,name:`${L(d.transport)}（${L(d.ride)}）`,qty:`×${f.people}`,amt:d.transport.price*f.people},
@@ -541,24 +570,32 @@ function renderSheet(){const c=sheet.cand;if(!c)return;const d=c.dest;const days
 
 /* ================= ナビシート（②③） ================= */
 let nav={day:0,step:0,view:'bird',taxi:'GO'};
-function navSteps(day){const stops=stopsOf(day);const steps=[];
- stops.forEach((s,i)=>{if(i===stops.length-1){steps.push({arrow:'◎',ja:`${L(s.title)} に到着`,en:`Arrived at ${L(s.title)}`,d:''});return}
-  steps.push({arrow:i%2?'⬅':'➡',ja:`${L(s.title)}を出て${i%2?'左':'右'}へ`,en:`Exit ${L(s.title)}, turn ${i%2?'left':'right'}`,d:`${(i*40+120)%300+80}m`});
-  steps.push({arrow:'⬆',ja:`${i%2?t('s.bus'):t('s.walk')}で ${L(stops[i+1].title)} へ`,en:`${i%2?'Bus':'Walk'} to ${L(stops[i+1].title)}`,d:`${(i*7+13)%20+6}${t('s.min')}`})});
+const ROADS_JA=['本町通り','駅前通り','中央大通り','緑地通り','川端通り','西大路通','東大路通','花見小路'];
+function navSteps(day){const stops=stopsOf(day);const steps=[];const turns=['right','left','straight','right','left','straight'];let ri=0;
+ stops.forEach((s,i)=>{if(i===stops.length-1){steps.push({turn:'arrive',dist:0,mode:'walk',road:L(s.title),ja:`${L(s.title)} に到着`,en:`Arrive at ${L(s.title)}`});return}
+  const next=stops[i+1];const mode=i%2?'bus':'walk';const r1=ROADS_JA[ri++%ROADS_JA.length];const t1=turns[i%turns.length];const t2=turns[(i+1)%turns.length];
+  const tj={left:'左折',right:'右折',straight:'直進'},te={left:'Turn left',right:'Turn right',straight:'Continue'};
+  steps.push({turn:t1,dist:(i*40+180)%300+120,mode,road:r1,then:t2,ja:`${r1} を${tj[t1]}`,en:`${te[t1]} onto ${r1}`});
+  const r2=ROADS_JA[ri++%ROADS_JA.length];
+  steps.push({turn:'straight',dist:(i*33+240)%320+90,mode,road:r2,arriveNext:L(next.title),ja:`${r2} を直進し ${L(next.title)} へ`,en:`Continue on ${r2} to ${L(next.title)}`})});
  return steps}
-function streetView(st){const dir=st.arrow==='⬅'?-1:st.arrow==='➡'?1:0;const bend=dir*62;
- const cx=160;
- return `<svg class="street" viewBox="0 0 320 232" aria-label="driver view">
-  <rect width="320" height="118" class="sv-sky"/><rect y="118" width="320" height="114" class="sv-ground"/>
-  <circle cx="252" cy="34" r="14" class="sv-sun"/>
-  <g class="sv-bldg"><polygon points="0,232 96,232 128,118 96,118 96,96 64,96 64,118 0,118"/><rect x="20" y="128" width="10" height="14"/><rect x="44" y="140" width="10" height="14"/></g>
-  <g class="sv-bldg b2"><polygon points="320,232 224,232 194,118 224,118 224,88 258,88 258,118 320,118"/><rect x="270" y="130" width="10" height="14"/><rect x="292" y="146" width="10" height="14"/></g>
-  <polygon points="112,232 208,232 ${cx+10+dir*10},118 ${cx-10+dir*10},118" class="sv-road"/>
-  <line x1="${cx}" y1="230" x2="${cx+dir*10}" y2="120" class="sv-dash"/>
-  <rect x="126" y="212" width="70" height="5" class="sv-cross"/><rect x="132" y="202" width="58" height="5" class="sv-cross"/>
-  <path d="M${cx} 226 L${cx} 176 Q${cx} 156 ${cx+bend*0.55} 150 L${cx+bend} 144" class="sv-ribbon"/>
-  ${dir===0?`<polygon points="${cx-9},150 ${cx+9},150 ${cx},128" class="sv-head"/>`:`<polygon points="${cx+bend},156 ${cx+bend},132 ${cx+bend+dir*20},144" class="sv-head"/>`}
+function streetView(st){const dir=st.turn==='left'?-1:st.turn==='right'?1:0;const bend=dir*70;const cx=160;
+ return `<svg class="street" viewBox="0 0 320 226" aria-label="driver view">
+  <defs><linearGradient id="svp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5aa0ff"/><stop offset="1" stop-color="#2f6fe0"/></linearGradient></defs>
+  <rect width="320" height="110" class="sv-sky"/><rect y="110" width="320" height="116" class="sv-ground"/>
+  <circle cx="256" cy="30" r="13" class="sv-sun"/>
+  <g class="sv-bldg"><polygon points="0,226 98,226 132,110 96,110 96,84 60,84 60,110 0,110"/><rect x="18" y="122" width="9" height="13"/><rect x="40" y="136" width="9" height="13"/><rect x="62" y="150" width="9" height="13"/></g>
+  <g class="sv-bldg b2"><polygon points="320,226 222,226 190,110 224,110 224,78 262,78 262,110 320,110"/><rect x="274" y="124" width="9" height="13"/><rect x="296" y="140" width="9" height="13"/></g>
+  <polygon points="104,226 216,226 ${cx+9}, 110 ${cx-9},110" class="sv-road"/>
+  <line x1="${cx-38}" y1="226" x2="${cx-4}" y2="112" class="sv-edge"/><line x1="${cx+38}" y1="226" x2="${cx+4}" y2="112" class="sv-edge"/>
+  <line x1="${cx}" y1="226" x2="${cx}" y2="112" class="sv-dash"/>
+  <rect x="120" y="206" width="80" height="6" class="sv-cross"/><rect x="128" y="194" width="64" height="5" class="sv-cross"/><rect x="136" y="184" width="48" height="4" class="sv-cross"/>
+  <path d="M${cx} 222 L${cx} 172 Q${cx} 150 ${cx+bend*0.5} 144 L${cx+bend} 138" class="sv-ribbon"/>
+  ${dir===0?`<polygon points="${cx-11},146 ${cx+11},146 ${cx},122" class="sv-head"/>`:`<polygon points="${cx+bend+dir*4},148 ${cx+bend+dir*4},128 ${cx+bend+dir*24},138" class="sv-head"/>`}
  </svg>`}
+function laneStrip(st){if(st.turn==='arrive')return '';const lanes=['straight','straight',st.turn==='straight'?'straight':st.turn];
+ const g={left:'↰',right:'↱',straight:'↑'};
+ return `<div class="lanes">${lanes.map((l,i)=>`<span class="lane ${i===lanes.length-1?'on':''}">${g[l]}</span>`).join('')}</div>`}
 function openNav(dayIdx){nav={day:dayIdx,step:0};renderNav();$('#navSheet').classList.add('open')}
 function renderNav(){const tt=activeTrip;const d=destById(tt.destId)||makeGenericDest(L(tt.title));const day=tt.days[nav.day];const stops=stopsOf(day);
  const steps=navSteps(day);const st=steps[Math.min(nav.step,steps.length-1)];
@@ -566,11 +603,13 @@ function renderNav(){const tt=activeTrip;const d=destById(tt.destId)||makeGeneri
  const totalMin=stops.reduce((s,x)=>s+(x.dur||45),0);const eta=addMin('09:00',Math.round(totalMin*(nav.step+1)/steps.length));
  $('#navSheet').innerHTML=`<div class="sheet-card nav-card">
   <div class="sheet-bar dark"><b>🧭 DAY ${nav.day+1} ${t('nav.title')}</b><button class="close" data-act="close-nav">×</button></div>
-  <div class="nav-instr"><span class="nav-arrow">${st.arrow}</span><div><b>${L(st)}</b><small>${st.d}</small></div></div>
+  ${(()=>{const g={left:'↰',right:'↱',straight:'↑',arrive:'◉'};const nx=steps[nav.step+1];
+    return `<div class="nav-instr"><span class="nav-arrow big">${g[st.turn]}</span><div class="nav-itxt">${st.dist?`<b class="nav-dist">${st.dist}<i>m</i></b>`:`<b class="nav-dist arr">${state.lang==='ja'?'まもなく到着':'Arriving'}</b>`}<span>${L(st)}</span></div></div>
+    ${st.then?`<div class="nav-then"><span>${g[st.then]}</span>${state.lang==='ja'?'その先':'Then'} ${st.then==='left'?(state.lang==='ja'?'左折':'left'):st.then==='right'?(state.lang==='ja'?'右折':'right'):(state.lang==='ja'?'直進':'straight')}</div>`:(nx&&nx.turn==='arrive'?`<div class="nav-then"><span>◉</span>${state.lang==='ja'?'まもなく目的地':'Destination soon'}</div>`:'')}`})()}
   <div class="nav-progress"><i style="width:${Math.round((nav.step+1)/steps.length*100)}%"></i></div>
-  <div class="seg nav-seg"><button class="${nav.view!=='street'?'active':''}" data-act="nav-view" data-val="bird">🗺 ${state.lang==='ja'?'鳥瞰':'Bird'}</button><button class="${nav.view==='street'?'active':''}" data-act="nav-view" data-val="street">👁 ${state.lang==='ja'?'目線':'Street'}</button></div>
-  ${nav.view==='street'?streetView(st):birdMap(stops,activeStop,d)}
-  ${nav.view==='street'?`<p class="apinote nav-note">※ 実装時はGPS+AR実写ビュー（AMap NaviAgent型）に置換</p>`:''}
+  <div class="seg nav-seg"><button class="${nav.view!=='street'?'active':''}" data-act="nav-view" data-val="bird">🗺 ${state.lang==='ja'?'地図':'Map'}</button><button class="${nav.view==='street'?'active':''}" data-act="nav-view" data-val="street">🚗 ${state.lang==='ja'?'運転目線':'Drive'}</button></div>
+  ${nav.view==='street'?streetView(st)+laneStrip(st):birdMap(stops,activeStop,d)}
+  ${nav.view==='street'?`<p class="apinote nav-note">※ ${state.lang==='ja'?'実装時はGPS＋実写/3Dの運転目線ビュー（Tesla・AMap型）':'Real GPS + 3D drive view in production'}</p>`:''}
   <div class="nav-stats"><div><small>${t('nav.eta')}</small><b>${eta}</b></div><div><small>${t('nav.left')}</small><b>${Math.max(steps.length-1-nav.step,0)} step</b></div><div><small>Σ</small><b>${(stops.length*0.9).toFixed(1)} km</b></div></div>
   <div class="f-row nav-btns"><button class="outline-btn" data-act="nav-restart">${t('nav.restart')}</button><button class="primary-btn" data-act="nav-next" style="margin-top:12px"><span>${t('nav.next')}</span><b>→</b></button></div>
   <div class="sheet-body">
