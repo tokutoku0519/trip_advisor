@@ -195,6 +195,43 @@ const HOTEL_ALTS=[{ja:'節約案: 駅近ビジネスホテル',en:'Budget: busin
 function mealAlts(dest,usedName){const others=dest.spots.filter(s=>s.type==='food'&&L(s)!==usedName).slice(0,2);
  return others.length?others.map(s=>({ja:s.ja,en:s.en})):[{ja:'駅ナカで軽く',en:'Quick station bite'},{ja:'ローカル食堂',en:'Local diner'}]}
 const toMin=(hm)=>{const m=String(hm).match(/(\d+):(\d+)/);return m?+m[1]*60+ +m[2]:900};
+/* 路線の色・記号（公式に寄せたデモ値）＋交通詳細レンダラ（③） */
+const LINES=[
+ {re:/のぞみ|ひかり|こだま|新幹線/,code:'',name:{ja:'東海道・山陽新幹線',en:'Tokaido–Sanyo Shinkansen'},color:'#0068b7',glyph:'🚄',book:1},
+ {re:/マリンライナー|瀬戸大橋/,code:'M',name:{ja:'瀬戸大橋線',en:'Seto-Ohashi Line'},color:'#2472c8',glyph:'🚃',book:1},
+ {re:/ロマンスカー|小田急/,code:'OH',name:{ja:'小田急ロマンスカー',en:'Odakyu Romancecar'},color:'#0071c1',glyph:'🚃',book:1},
+ {re:/京阪/,code:'KH',name:{ja:'京阪本線',en:'Keihan Main Line'},color:'#0a9d5b',glyph:'🚃'},
+ {re:/地下鉄|烏丸|東西線/,code:'K',name:{ja:'京都市営地下鉄',en:'Kyoto Subway'},color:'#00a29a',glyph:'🚇'},
+ {re:/奈良線/,code:'D',name:{ja:'JR奈良線',en:'JR Nara Line'},color:'#a8681e',glyph:'🚃'},
+ {re:/嵯峨野|嵯峨/,code:'E',name:{ja:'JR嵯峨野線',en:'Sagano Line'},color:'#804098',glyph:'🚃'},
+ {re:/市バス|バス|オリーブバス/,code:'BUS',name:{ja:'路線バス',en:'Local bus'},color:'#009e3a',glyph:'🚌',bus:1},
+ {re:/高速艇|フェリー|船|港/,code:'⚓',name:{ja:'航路（船）',en:'Ferry'},color:'#0089a8',glyph:'⛴',book:1},
+ {re:/飛行機|便|空港|✈|ANA|JL|CI|AF|MU/,code:'✈',name:{ja:'航空便',en:'Flight'},color:'#1a5fb4',glyph:'✈',book:1},
+ {re:/車|マイカー|ドライブ|高速道路/,code:'',name:{ja:'車（自家用）',en:'Car'},color:'#4a5568',glyph:'🚗',car:1},
+ {re:/徒歩/,code:'',name:{ja:'徒歩',en:'Walk'},color:'#5f6b7a',glyph:'🚶',walk:1},
+];
+const guessLine=(txt='')=>LINES.find(l=>l.re.test(txt))||{code:'',name:{ja:'電車',en:'Train'},color:'#3d6fd6',glyph:'🚃'};
+const lineBadge=(l)=>`<span class="ln-badge" style="--lc:${l.color}">${l.code?`<i class="ln-code">${l.code}</i>`:`<i class="ln-g">${l.glyph}</i>`}<b>${L(l.name)}</b></span>`;
+// 1区間の詳細（便名・時刻・のりば・予約/ルート）
+function transitDetail(seg){const l=seg.line||guessLine(L(seg.name||{ja:'',en:''}));
+ const head=`<div class="td-head">${lineBadge(l)}${seg.name?`<b class="td-name">${L(seg.name)}</b>`:''}</div>`;
+ let rows='';
+ if(seg.from||seg.to){rows=`<div class="td-legrows">
+   ${seg.from?`<div class="td-r"><time>${seg.dep||''}</time><span class="td-dot dep"></span><div><b>${L(seg.from)}</b><small>${state.lang==='ja'?'発':'dep'}</small></div></div>`:''}
+   ${seg.to?`<div class="td-r"><time>${seg.arr||''}</time><span class="td-dot arr"></span><div><b>${L(seg.to)}</b><small>${state.lang==='ja'?'着':'arr'}</small></div></div>`:''}</div>`;}
+ const note=seg.note?`<small class="td-note">ⓘ ${L(seg.note)}</small>`:'';
+ const action=l.walk?`<button class="td-act" data-act="see-route">🗺 ${state.lang==='ja'?'ルートを見る':'See route'}</button>`
+   :l.bus?`<button class="td-act" data-act="see-route">🧭 ${state.lang==='ja'?'行き方':'Directions'}</button>`
+   :seg.book||l.book?`<button class="td-act book" data-act="ext-book">🎫 ${state.lang==='ja'?'予約する（外部サイト）':'Book (external)'} ↗</button>`:'';
+ return `<div class="tdetail" style="--lc:${l.color}">${head}${rows}${note}${action}</div>`}
+// 都市内の移動を区間に分解（「市バス206系統 15分＋清水道から徒歩10分」→ 2区間）
+function moveRows(go){if(!go)return '';const raw=L(go);
+ const parts=raw.split(/＋|\+/).map(x=>x.trim()).filter(Boolean);
+ return `<div class="mv">${parts.map(p=>{const l=guessLine(p);
+  const act=l.walk?`<button class="mv-act" data-act="see-route">${state.lang==='ja'?'ルートを見る':'Route'} ↗</button>`
+   :`<button class="mv-act" data-act="see-route">${state.lang==='ja'?'行き方':'How'} ↗</button>`;
+  return `<div class="mv-r" style="--lc:${l.color}"><span class="mv-ic">${l.code||l.glyph}</span><span class="mv-tx">${esc(p)}</span>${act}</div>`}).join('')}</div>`}
+
 function buildItinerary(dest,dayCount,opts={},form=state.form){
  const perDay=opts.perDay||3;const focus=opts.focus||null;
  const origin=form.origin||(state.lang==='ja'?'出発地':'Origin');
@@ -216,11 +253,11 @@ function buildItinerary(dest,dayCount,opts={},form=state.form){
    push({kind:'depart',icon:'🏠',time:dep,title:{ja:`${origin} を出発`,en:`Leave ${origin}`},sub:{ja:'チケット・QRはアプリ内',en:'Tickets & QR in the app'}});
    let arr;
    if(byCar){const drive=Math.round(dest.travelMin*0.85)+30;arr=addMin(dep,drive);
-    push({kind:'ride',icon:'🚗',time:dep,title:{ja:'マイカーで移動（高速道路）',en:'Drive via expressway'},sub:{ja:`約${Math.floor(drive/60)}時間${drive%60}分・SA休憩1回込み・${arr}着`,en:`~${Math.floor(drive/60)}h${drive%60}m incl. one rest stop · arr ${arr}`}});}
-   else if(dest.legs){dest.legs.forEach(lg=>push({kind:'ride',icon:lg.icon,time:lg.dep,title:lg.name,sub:{ja:`${L(lg.from)} ${lg.dep}発 → ${lg.arr} ${L(lg.to)}着${lg.note?'・'+lg.note.ja:''}`,en:`${L(lg.from)} ${lg.dep} → ${lg.arr} ${L(lg.to)}${lg.note?' · '+lg.note.en:''}`}}));
+    push({kind:'ride',time:dep,title:{ja:'車で移動',en:'Drive'},seg:{name:{ja:'マイカー（高速道路）',en:'Car via expressway'},dep,arr,from:{ja:origin,en:origin},to:dest.station,note:{ja:`約${Math.floor(drive/60)}時間${drive%60}分・SA休憩1回`,en:`~${Math.floor(drive/60)}h${drive%60}m incl. rest`},line:guessLine('車')}});}
+   else if(dest.legs){dest.legs.forEach(lg=>push({kind:'ride',time:lg.dep,title:lg.name,seg:{name:lg.name,dep:lg.dep,arr:lg.arr,from:lg.from,to:lg.to,note:lg.note,line:guessLine(L(lg.name))}}));
     arr=dest.legs[dest.legs.length-1].arr}
    else{const depR=addMin(dep,15);arr=longHaul?(dest.arrLocal||'17:30'):addMin(depR,dest.travelMin);
-    push({kind:'ride',icon:dest.mode,time:depR,title:dest.ride,sub:longHaul?{ja:`${depR}発 → 現地 ${arr} ${L(dest.station)}着（時差込み）`,en:`Dep ${depR} → arr ${arr} local, ${L(dest.station)}`}:{ja:`${depR}発 → ${arr} ${L(dest.station)}着`,en:`Dep ${depR} → arr ${arr} ${L(dest.station)}`}})}
+    push({kind:'ride',time:depR,title:dest.ride,seg:{name:dest.ride,dep:depR,arr,from:{ja:origin,en:origin},to:dest.station,note:longHaul?{ja:'現地時刻・時差込み',en:'local time'}:null,line:guessLine(L(dest.ride))}})}
    const arrM=toMin(arr);
    if(longHaul||arrM>=17*60){
     push({kind:'hotel',icon:'🏨',time:addMin(arr,45),title:dest.hotel,sub:{ja:'チェックイン・ひと休み',en:'Check-in & rest'},alts:HOTEL_ALTS});
@@ -248,7 +285,8 @@ function buildItinerary(dest,dayCount,opts={},form=state.form){
    const carMin=Math.round(dest.travelMin*0.85)+30;
    const bk=dest.back;const depBack=byCar?'16:00':(bk?bk.dep:(longHaul?'15:00':'16:00'));
    const arrBack=byCar?addMin(depBack,carMin):(bk?bk.arr:(longHaul?(state.lang==='ja'?'翌日':'+1d'):addMin(depBack,dest.travelMin)));
-   push({kind:'ride',icon:byCar?'🚗':dest.mode,time:depBack,title:byCar?{ja:'マイカーで帰路（高速道路）',en:'Drive home via expressway'}:(bk?bk.name:dest.ride),sub:{ja:`${L(dest.station)} ${depBack}発 → ${arrBack} ${goal}着`,en:`${L(dest.station)} dep ${depBack} → arr ${arrBack}, ${goal}`}});
+   const backName=byCar?{ja:'マイカーで帰路（高速道路）',en:'Drive home'}:(bk?bk.name:dest.ride);
+   push({kind:'ride',time:depBack,title:backName,seg:{name:backName,dep:depBack,arr:arrBack,from:dest.station,to:{ja:goal,en:goal},note:null,line:guessLine(byCar?'車':L(backName))}});
    push({kind:'depart',icon:'🏁',time:String(arrBack).split(' ').pop(),title:{ja:`${goal} に到着`,en:`Arrive at ${goal}`},sub:{ja:'おつかれさま！アルバムが自動で整理されます',en:'Welcome back! Album auto-organized'}});
   }
   days.push(day)}
@@ -341,7 +379,7 @@ const TIP_CATS=[{id:'all',ja:'すべて',en:'All'},{id:'prep',ja:'準備',en:'Pr
 let tipCat='all';
 
 /* ================= アクティブな旅 ================= */
-let activeTrip={destId:'kyoto',title:{ja:'京都旅行',en:'Kyoto Trip'},dates:'7/18 (Sat) – 7/20 (Mon)',members:['Koki','Yui'],
+let activeTrip={destId:'kyoto',title:{ja:'京都旅行',en:'Kyoto Trip'},dates:'7/18 (Sat) – 7/20 (Mon)',members:['Koki','Yui'],byCar:false,
  days:buildItinerary(destById('kyoto'),3,{},{origin:'自宅（東京）',roundtrip:true,people:2}),extra:[],invite:'tabi.app/t/KYO-8264',
  album:[{grad:'g-kyoto',emoji:'⛩',label:{ja:'DAY1 清水寺',en:'Day 1 Kiyomizu'}},{grad:'g-food',emoji:'🍡',label:{ja:'DAY1 祇園',en:'Day 1 Gion'}},{grad:'g-alley',emoji:'🏮',label:{ja:'DAY2 先斗町',en:'Day 2 Pontocho'}},{grad:'g-view',emoji:'🌇',label:{ja:'DAY2 鴨川',en:'Day 2 Kamo River'}}],
  diary:[{d:1,time:'21:04',who:'Yui',text:{ja:'清水寺、朝イチで行って正解。人が少なくて空気が澄んでた。',en:'Kiyomizu first thing in the morning — so quiet, so clear.'}},{d:2,time:'15:22',who:'Koki',text:{ja:'抹茶パフェ、並んだけど後悔なし🍵',en:'Queued for the matcha parfait. Zero regrets 🍵'}}],
@@ -354,6 +392,9 @@ function parseNights(){const f=state.form;
  const st=STAYS.find(x=>x.id===f.stay);if(st)return st.n;
  const m=f.vague.match(/(\d+)\s*泊/);if(m)return Math.min(+m[1],13);
  if(/日帰り|day\s*trip/i.test(f.vague))return 0;return 2}
+// 日数の明示指定があるか（なければ距離で決める＝④）
+function nightsSpecified(){const f=state.form;return !!((f.from&&f.to)||f.stay||/(\d+)\s*泊|日帰り|day\s*trip/i.test(f.vague))}
+function distNights(dest){const tm=dest.travelMin||150;return tm>=400?3:tm>=180?2:1}
 function planPrice(dest,nights,mult=1){const n=Math.max(nights,1);
  return Math.round((dest.transport.price+dest.hotel.price*n+dest.act.price+3500*(nights+1))*mult/100)*100}
 const apiBase=()=>{try{return (localStorage.getItem('tabi.api')||'').replace(/\/$/,'')}catch(e){return ''}};
@@ -376,6 +417,7 @@ async function searchPlans(){const f=state.form;const nights=parseNights();const
  if(apiBase()){const remote=await searchPlansRemote(f,nights);
   if(remote){remote.forEach(c=>{const budget=BUDGETS.find(b=>b.id===f.budget);if(budget)c.overBudget=c.price>budget.max});
    state.results={cands:remote,nights,days};render();setTimeout(()=>{const r=$('#results');if(r)r.scrollIntoView({behavior:'smooth'})},60);return}}
+ const spec=nightsSpecified();
  const kws=KW.filter(k=>k.kw.some(w=>(f.vague+' '+f.must).toLowerCase().includes(w)));
  const budget=BUDGETS.find(b=>b.id===f.budget);
  const typed=f.dest.trim();
@@ -389,7 +431,7 @@ async function searchPlans(){const f=state.form;const nights=parseNights();const
    {dest:destHit,name:{ja:t('v.classic'),en:t('v.classic')},desc:{ja:T.ja['v.classic.d'],en:T.en['v.classic.d']},opts:{perDay:3},mult:1,reason:destHit.generic?t('reason.generic'):t('reason.dest')},
    {dest:destHit,name:{ja:T.ja['v.theme'](focusLabel),en:T.en['v.theme'](focusLabel)},desc:{ja:T.ja['v.theme.d'](focusLabel),en:T.en['v.theme.d'](focusLabel)},opts:{perDay:3,focus},mult:.95,reason:kwLabel?t('reason.kw',kwLabel):t('reason.near')},
    {dest:destHit,name:{ja:t('v.slow'),en:t('v.slow')},desc:{ja:T.ja['v.slow.d'],en:T.en['v.slow.d']},opts:{perDay:2,startLate:true},mult:.9,reason:t('reason.near')},
-  ].map(c=>({...c,nights,days,price:planPrice(c.dest,nights,c.mult)}));
+  ].map(c=>{const cn=spec?nights:distNights(c.dest);return{...c,nights:cn,days:cn+1,price:planPrice(c.dest,cn,c.mult)}});
  }else{
   const scored=DESTS.map(d=>{let s=1,reason=t('reason.near');
    kws.forEach(k=>{if(d.feat.includes(k.feat)){s+=3;reason=t('reason.kw',L(k))}});
@@ -400,7 +442,7 @@ async function searchPlans(){const f=state.form;const nights=parseNights();const
    if(budget&&(price>budget.max||price<budget.min*.7))s=-99; /* ⑫ 予算を厳守 */
    s+=(d.id.length%3)*.1;return{d,s,reason,price}})
   .filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,3);
-  cands=scored.map(x=>({dest:x.d,name:{ja:`${x.d.ja}への旅`,en:`Trip to ${x.d.en}`},desc:{ja:t('v.classic.d'),en:t('v.classic.d')},opts:{perDay:3},reason:x.reason,price:x.price,nights,days}));
+  cands=scored.map(x=>{const cn=spec?nights:distNights(x.d);return{dest:x.d,name:{ja:`${x.d.ja}への旅`,en:`Trip to ${x.d.en}`},desc:{ja:t('v.classic.d'),en:t('v.classic.d')},opts:{perDay:3},reason:x.reason,price:planPrice(x.d,cn),nights:cn,days:cn+1}});
  }
  cands.forEach(c=>{if(budget)c.overBudget=c.price>budget.max});
  state.results={cands,nights,days};render()}
@@ -412,8 +454,10 @@ const toast=(m)=>{const el=$('#toast');el.querySelector('p').textContent=m;el.cl
 
 function evRow(e,idx,editable){
  if(e.kind==='walkrow')return '';
+ // 移動系（ride）は路線バッジ付きの詳細カードで表示
+ if(e.kind==='ride'&&e.seg){return `<div class="ev k-ride"><time>${e.time}</time><i></i><div class="ev-body">${transitDetail(e.seg)}</div></div>`}
  const alts=e.alts?`<div class="alts"><small>${t('s.alt')}</small>${e.alts.map((a,i)=>`<button class="alt-chip" data-act="swap" data-uid="${e.uid}" data-i="${i}">⇄ ${L(a)}</button>`).join('')}</div>`:'';
- const walk=e.go&&idx>0?`<div class="tr-row"><span></span><small>↳ ${L(e.go)}</small></div>`:'';
+ const walk=e.go&&idx>0?`<div class="tr-row"><span></span>${moveRows(e.go)}</div>`:'';
  const dur=e.dur?` · ${e.dur}${t('s.min')}`:'';
  const sub=e.sub?`<small>${L(e.sub)}${dur}</small>`:(e.type?`<small>${L(TYPE_META[e.type])}${dur}</small>`:'');
  return `${walk}<div class="ev k-${e.kind}"><time>${e.time}</time><i></i><div><b>${e.icon||''} ${L(e.title)}${e.detour?' <em class="detour-tag">寄り道</em>':''}</b>${sub}${alts}</div>${editable?`<button class="ev-edit" data-act="ev-edit" data-uid="${e.uid}">✎</button>`:''}</div>`}
@@ -569,47 +613,73 @@ function renderSheet(){const c=sheet.cand;if(!c)return;const d=c.dest;const days
   <div class="sheet-foot"><button class="primary-btn" data-act="start-trip"><span>${t('s.start')}</span><b>→</b></button></div></div>`}
 
 /* ================= ナビシート（②③） ================= */
-let nav={day:0,step:0,view:'bird',taxi:'GO'};
+let nav={day:0,step:0,view:'map',taxi:'GO',gps:null};
 const ROADS_JA=['本町通り','駅前通り','中央大通り','緑地通り','川端通り','西大路通','東大路通','花見小路'];
+// モード対応のターンバイターン（①運転／②徒歩／交通を出し分け）
 function navSteps(day){const stops=stopsOf(day);const steps=[];const turns=['right','left','straight','right','left','straight'];let ri=0;
- stops.forEach((s,i)=>{if(i===stops.length-1){steps.push({turn:'arrive',dist:0,mode:'walk',road:L(s.title),ja:`${L(s.title)} に到着`,en:`Arrive at ${L(s.title)}`});return}
-  const next=stops[i+1];const mode=i%2?'bus':'walk';const r1=ROADS_JA[ri++%ROADS_JA.length];const t1=turns[i%turns.length];const t2=turns[(i+1)%turns.length];
-  const tj={left:'左折',right:'右折',straight:'直進'},te={left:'Turn left',right:'Turn right',straight:'Continue'};
-  steps.push({turn:t1,dist:(i*40+180)%300+120,mode,road:r1,then:t2,ja:`${r1} を${tj[t1]}`,en:`${te[t1]} onto ${r1}`});
+ const driving=!!activeTrip.byCar;
+ stops.forEach((s,i)=>{if(i===stops.length-1){steps.push({turn:'arrive',dist:0,mode:driving?'drive':'walk',ja:`${L(s.title)} に到着`,en:`Arrive at ${L(s.title)}`});return}
+  const next=stops[i+1];const tj={left:'左折',right:'右折',straight:'直進'},te={left:'Turn left',right:'Turn right',straight:'Continue'};
+  const bus=!driving&&i%2===1;const busno=[206,100,5,4][i%4];
+  if(bus){
+   steps.push({mode:'transit',line:'bus',busno,turn:'straight',stops2:(i%3)+3,min:(i*7+9)%14+8,
+    ja:`市バス${busno}系統で ${L(next.title)} 方面へ`,en:`Bus ${busno} toward ${L(next.title)}`});
+   steps.push({mode:'walk',turn:turns[i%turns.length],dist:(i*23+90)%160+40,road:ROADS_JA[ri++%ROADS_JA.length],
+    ja:`下車して ${ROADS_JA[(ri)%ROADS_JA.length]} を${tj[turns[i%turns.length]]}、${L(next.title)}へ`,en:`Get off and reach ${L(next.title)}`});
+   return}
+  const t1=turns[i%turns.length];const r1=ROADS_JA[ri++%ROADS_JA.length];const t2=turns[(i+1)%turns.length];
+  steps.push({mode:driving?'drive':'walk',turn:t1,dist:(i*40+180)%300+120,road:r1,then:t2,ja:`${r1} を${tj[t1]}`,en:`${te[t1]} onto ${r1}`});
   const r2=ROADS_JA[ri++%ROADS_JA.length];
-  steps.push({turn:'straight',dist:(i*33+240)%320+90,mode,road:r2,arriveNext:L(next.title),ja:`${r2} を直進し ${L(next.title)} へ`,en:`Continue on ${r2} to ${L(next.title)}`})});
+  steps.push({mode:driving?'drive':'walk',turn:'straight',dist:(i*33+220)%300+90,road:r2,ja:`${r2} を直進し ${L(next.title)} へ`,en:`Continue on ${r2} to ${L(next.title)}`})});
  return steps}
-function streetView(st){const dir=st.turn==='left'?-1:st.turn==='right'?1:0;const bend=dir*70;const cx=160;
- return `<svg class="street" viewBox="0 0 320 226" aria-label="driver view">
-  <defs><linearGradient id="svp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5aa0ff"/><stop offset="1" stop-color="#2f6fe0"/></linearGradient></defs>
-  <rect width="320" height="110" class="sv-sky"/><rect y="110" width="320" height="116" class="sv-ground"/>
+function streetView(st,walk){const dir=st.turn==='left'?-1:st.turn==='right'?1:0;const bend=dir*70;const cx=160;
+ const ribbon=walk?'sv-ribbon walk':'sv-ribbon';
+ return `<svg class="street" viewBox="0 0 320 226" aria-label="view">
+  <rect width="320" height="110" class="sv-sky"/><rect y="110" width="320" height="116" class="${walk?'sv-ground walk':'sv-ground'}"/>
   <circle cx="256" cy="30" r="13" class="sv-sun"/>
   <g class="sv-bldg"><polygon points="0,226 98,226 132,110 96,110 96,84 60,84 60,110 0,110"/><rect x="18" y="122" width="9" height="13"/><rect x="40" y="136" width="9" height="13"/><rect x="62" y="150" width="9" height="13"/></g>
   <g class="sv-bldg b2"><polygon points="320,226 222,226 190,110 224,110 224,78 262,78 262,110 320,110"/><rect x="274" y="124" width="9" height="13"/><rect x="296" y="140" width="9" height="13"/></g>
-  <polygon points="104,226 216,226 ${cx+9}, 110 ${cx-9},110" class="sv-road"/>
-  <line x1="${cx-38}" y1="226" x2="${cx-4}" y2="112" class="sv-edge"/><line x1="${cx+38}" y1="226" x2="${cx+4}" y2="112" class="sv-edge"/>
-  <line x1="${cx}" y1="226" x2="${cx}" y2="112" class="sv-dash"/>
-  <rect x="120" y="206" width="80" height="6" class="sv-cross"/><rect x="128" y="194" width="64" height="5" class="sv-cross"/><rect x="136" y="184" width="48" height="4" class="sv-cross"/>
-  <path d="M${cx} 222 L${cx} 172 Q${cx} 150 ${cx+bend*0.5} 144 L${cx+bend} 138" class="sv-ribbon"/>
-  ${dir===0?`<polygon points="${cx-11},146 ${cx+11},146 ${cx},122" class="sv-head"/>`:`<polygon points="${cx+bend+dir*4},148 ${cx+bend+dir*4},128 ${cx+bend+dir*24},138" class="sv-head"/>`}
+  <polygon points="${walk?'118,226 202,226 168,110 152,110':'104,226 216,226 169,110 151,110'}" class="${walk?'sv-road walk':'sv-road'}"/>
+  ${walk?`<rect x="120" y="206" width="80" height="6" class="sv-cross"/><rect x="126" y="196" width="68" height="5" class="sv-cross"/><rect x="132" y="187" width="56" height="4" class="sv-cross"/>`:`<line x1="${cx-38}" y1="226" x2="${cx-4}" y2="112" class="sv-edge"/><line x1="${cx+38}" y1="226" x2="${cx+4}" y2="112" class="sv-edge"/><line x1="${cx}" y1="226" x2="${cx}" y2="112" class="sv-dash"/>`}
+  <path d="M${cx} 222 L${cx} 172 Q${cx} 150 ${cx+bend*0.5} 144 L${cx+bend} 138" class="${ribbon}"/>
+  ${dir===0?`<polygon points="${cx-11},146 ${cx+11},146 ${cx},122" class="sv-head ${walk?'w':''}"/>`:`<polygon points="${cx+bend+dir*4},148 ${cx+bend+dir*4},128 ${cx+bend+dir*24},138" class="sv-head ${walk?'w':''}"/>`}
+  ${walk?`<circle cx="${cx}" cy="214" r="7" class="sv-me"/>`:''}
  </svg>`}
 function laneStrip(st){if(st.turn==='arrive')return '';const lanes=['straight','straight',st.turn==='straight'?'straight':st.turn];
  const g={left:'↰',right:'↱',straight:'↑'};
  return `<div class="lanes">${lanes.map((l,i)=>`<span class="lane ${i===lanes.length-1?'on':''}">${g[l]}</span>`).join('')}</div>`}
-function openNav(dayIdx){nav={day:dayIdx,step:0};renderNav();$('#navSheet').classList.add('open')}
+// GPS（②リアルタイム位置。取得できれば実座標、不可ならデモ表示）
+function startGps(){if(!navigator.geolocation)return;
+ try{if(nav._watch)navigator.geolocation.clearWatch(nav._watch);
+  nav._watch=navigator.geolocation.watchPosition(p=>{nav.gps={lat:p.coords.latitude,lng:p.coords.longitude,acc:Math.round(p.coords.accuracy)};
+   const el=$('#gpsLabel');if(el)el.textContent=`🛰 GPS 現在地 ${nav.gps.lat.toFixed(4)}, ${nav.gps.lng.toFixed(4)}（±${nav.gps.acc}m）`;
+  },()=>{},{enableHighAccuracy:true,maximumAge:2000})}catch(e){}}
+function openNav(dayIdx){nav={day:dayIdx,step:0,view:'map',taxi:'GO',gps:null};renderNav();$('#navSheet').classList.add('open');startGps()}
 function renderNav(){const tt=activeTrip;const d=destById(tt.destId)||makeGenericDest(L(tt.title));const day=tt.days[nav.day];const stops=stopsOf(day);
- const steps=navSteps(day);const st=steps[Math.min(nav.step,steps.length-1)];
+ const steps=navSteps(day);const st=steps[Math.min(nav.step,steps.length-1)];const mode=st.mode;
  const activeStop=Math.min(Math.floor(nav.step/2),stops.length-1);
  const totalMin=stops.reduce((s,x)=>s+(x.dur||45),0);const eta=addMin('09:00',Math.round(totalMin*(nav.step+1)/steps.length));
+ // モードで使えるビューを決定（①運転目線は運転時のみ／②徒歩は歩行者ビュー）
+ const views=[['map','🗺 '+(state.lang==='ja'?'地図':'Map')]];
+ if(mode==='drive')views.push(['drive','🚗 '+(state.lang==='ja'?'運転目線':'Drive')]);
+ else if(mode==='walk')views.push(['walk','🚶 '+(state.lang==='ja'?'歩行者ビュー':'Walk')]);
+ if(!views.find(v=>v[0]===nav.view))nav.view='map';
+ const g={left:'↰',right:'↱',straight:'↑',arrive:'◉'};const nx=steps[nav.step+1];
+ // 指示バナー（交通はバス、運転/徒歩はターン）
+ const instr=mode==='transit'
+  ? `<div class="nav-instr"><span class="nav-arrow big bus">🚌</span><div class="nav-itxt"><b class="nav-dist">${st.stops2}<i>${state.lang==='ja'?'停':'stops'}</i></b><span>${L(st)}・約${st.min}分</span></div></div>`
+  : `<div class="nav-instr"><span class="nav-arrow big ${mode==='walk'?'walk':''}">${g[st.turn]}</span><div class="nav-itxt">${st.dist?`<b class="nav-dist">${st.dist}<i>m</i></b>`:`<b class="nav-dist arr">${state.lang==='ja'?'まもなく到着':'Arriving'}</b>`}<span>${L(st)}</span></div></div>`;
+ const then=st.then?`<div class="nav-then"><span>${g[st.then]}</span>${state.lang==='ja'?'その先':'Then'} ${st.then==='left'?(state.lang==='ja'?'左折':'left'):st.then==='right'?(state.lang==='ja'?'右折':'right'):(state.lang==='ja'?'直進':'straight')}</div>`:(nx&&nx.turn==='arrive'?`<div class="nav-then"><span>◉</span>${state.lang==='ja'?'まもなく目的地':'Destination soon'}</div>`:'');
+ const modeLabel=mode==='drive'?(state.lang==='ja'?'運転':'Driving'):mode==='transit'?(state.lang==='ja'?'バス乗車中':'On bus'):(state.lang==='ja'?'徒歩':'Walking');
+ const viewBody=nav.view==='drive'?streetView(st,false)+laneStrip(st):nav.view==='walk'?streetView(st,true):birdMap(stops,activeStop,d);
  $('#navSheet').innerHTML=`<div class="sheet-card nav-card">
-  <div class="sheet-bar dark"><b>🧭 DAY ${nav.day+1} ${t('nav.title')}</b><button class="close" data-act="close-nav">×</button></div>
-  ${(()=>{const g={left:'↰',right:'↱',straight:'↑',arrive:'◉'};const nx=steps[nav.step+1];
-    return `<div class="nav-instr"><span class="nav-arrow big">${g[st.turn]}</span><div class="nav-itxt">${st.dist?`<b class="nav-dist">${st.dist}<i>m</i></b>`:`<b class="nav-dist arr">${state.lang==='ja'?'まもなく到着':'Arriving'}</b>`}<span>${L(st)}</span></div></div>
-    ${st.then?`<div class="nav-then"><span>${g[st.then]}</span>${state.lang==='ja'?'その先':'Then'} ${st.then==='left'?(state.lang==='ja'?'左折':'left'):st.then==='right'?(state.lang==='ja'?'右折':'right'):(state.lang==='ja'?'直進':'straight')}</div>`:(nx&&nx.turn==='arrive'?`<div class="nav-then"><span>◉</span>${state.lang==='ja'?'まもなく目的地':'Destination soon'}</div>`:'')}`})()}
+  <div class="sheet-bar dark"><b>🧭 DAY ${nav.day+1} · ${modeLabel}</b><button class="close" data-act="close-nav">×</button></div>
+  ${instr}${then}
   <div class="nav-progress"><i style="width:${Math.round((nav.step+1)/steps.length*100)}%"></i></div>
-  <div class="seg nav-seg"><button class="${nav.view!=='street'?'active':''}" data-act="nav-view" data-val="bird">🗺 ${state.lang==='ja'?'地図':'Map'}</button><button class="${nav.view==='street'?'active':''}" data-act="nav-view" data-val="street">🚗 ${state.lang==='ja'?'運転目線':'Drive'}</button></div>
-  ${nav.view==='street'?streetView(st)+laneStrip(st):birdMap(stops,activeStop,d)}
-  ${nav.view==='street'?`<p class="apinote nav-note">※ ${state.lang==='ja'?'実装時はGPS＋実写/3Dの運転目線ビュー（Tesla・AMap型）':'Real GPS + 3D drive view in production'}</p>`:''}
+  <div class="gps-bar"><span class="gps-dot"></span><small id="gpsLabel">🛰 ${state.lang==='ja'?'GPSで現在地を追跡中…':'Tracking your location…'}</small></div>
+  ${views.length>1?`<div class="seg nav-seg">${views.map(v=>`<button class="${nav.view===v[0]?'active':''}" data-act="nav-view" data-val="${v[0]}">${v[1]}</button>`).join('')}</div>`:''}
+  ${viewBody}
+  ${nav.view!=='map'?`<p class="apinote nav-note">※ ${state.lang==='ja'?'実装時はGPS＋実写/3Dビュー（Tesla・AMap型）':'Real GPS + 3D view in production'}</p>`:''}
   <div class="nav-stats"><div><small>${t('nav.eta')}</small><b>${eta}</b></div><div><small>${t('nav.left')}</small><b>${Math.max(steps.length-1-nav.step,0)} step</b></div><div><small>Σ</small><b>${(stops.length*0.9).toFixed(1)} km</b></div></div>
   <div class="f-row nav-btns"><button class="outline-btn" data-act="nav-restart">${t('nav.restart')}</button><button class="primary-btn" data-act="nav-next" style="margin-top:12px"><span>${t('nav.next')}</span><b>→</b></button></div>
   <div class="sheet-body">
@@ -704,7 +774,7 @@ document.addEventListener('click',(e)=>{const el=e.target.closest('[data-act],.t
    if($('#planSheet').classList.contains('open'))renderSheet();else render()}break}
   case 'start-trip':{const c=sheet.cand;const d=c.dest;
    activeTrip={destId:d.generic?'kyoto':d.id,title:{ja:`${d.ja}旅行`,en:`${d.en} Trip`},dates:state.form.from&&state.form.to?`${state.form.from} – ${state.form.to}`:(state.lang==='ja'?'日程未定':'Dates TBD'),
-    members:['Koki','Yui'],days:sheet.days,extra:[],invite:`tabi.app/t/${(d.id||'trip').slice(0,3).toUpperCase()}-${1000+Math.floor(Math.random()*9000)}`,album:[],diary:[],expenses:[]};
+    members:['Koki','Yui'],byCar:(state.form.license==='yes'&&d.country==='jp'&&d.travelMin<420),days:sheet.days,extra:[],invite:`tabi.app/t/${(d.id||'trip').slice(0,3).toUpperCase()}-${1000+Math.floor(Math.random()*9000)}`,album:[],diary:[],expenses:[]};
    if(d.generic)activeTrip.destId='generic',activeTrip._generic=d;shioriDay=0;
    $('#planSheet').classList.remove('open');toast(t('toast.start',L(d)));state.screen='shiori';state.shioriTab='itin';render();window.scrollTo({top:0});break}
   case 'goto':state.screen=val;render();window.scrollTo({top:0});break;
@@ -732,6 +802,8 @@ document.addEventListener('click',(e)=>{const el=e.target.closest('[data-act],.t
   case 'close-nav':$('#navSheet').classList.remove('open');break;
   case 'nav-view':nav.view=val;renderNav();break;
   case 'taxi-p':nav.taxi=val;renderNav();break;
+  case 'ext-book':toast(state.lang==='ja'?'外部の予約サイトを開きます（デモ）':'Opening external booking (demo)');break;
+  case 'see-route':toast(state.lang==='ja'?'地図で経路を表示します（デモ）':'Showing route on map (demo)');break;
   case 'taxi-call':activeTrip.expenses.push({name:{ja:`タクシー（${nav.taxi}）`,en:`Taxi (${nav.taxi})`},payer:'Koki',amount:1180,src:'taxi'});toast(t('toast.taxi'));break;
   case 'nav-next':nav.step=Math.min(nav.step+1,navSteps(activeTrip.days[nav.day]).length-1);renderNav();break;
   case 'nav-restart':nav.step=0;renderNav();break;
