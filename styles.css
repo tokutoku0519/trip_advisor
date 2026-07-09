@@ -482,3 +482,32 @@ input[type="time"].f-input,input[type="date"].f-input{-webkit-appearance:none;ap
 .sv-head.w{fill:#00d178}
 .sv-me{fill:#00d178;stroke:#fff;stroke-width:2}
 @media(prefers-reduced-motion:reduce){.gps-dot{animation:none}}
+
+/* 経路カードの視認性改善（文字サイズ・余白・重なり解消） */
+.ev.k-ride{align-items:start}
+.tdetail{padding:11px 13px;margin:2px 0}
+.tdetail b{display:inline;font-weight:600}
+.tdetail .ln-badge{font-size:11px;line-height:1.3}
+.tdetail .ln-badge b{font-size:11px;font-weight:700}
+.tdetail .ln-badge .ln-code{font-size:9px;padding:2px 6px}
+.tdetail .ln-badge .ln-g{font-size:14px}
+.tdetail .td-name{display:block;font-size:13.5px;font-weight:700;margin-top:5px;line-height:1.35}
+.td-head{gap:7px;row-gap:2px}
+.tdetail .td-legrows{margin:9px 0 3px;gap:9px}
+.tdetail .td-r{grid-template-columns:44px 12px 1fr;align-items:baseline}
+.tdetail .td-r time{font-size:11.5px}
+.tdetail .td-r b{font-size:12.5px;font-weight:600}
+.tdetail .td-r small{font-size:9.5px;color:#9295a0}
+.td-dot{align-self:center}
+.tdetail .td-note{font-size:9.5px;margin:6px 0 2px;line-height:1.6}
+.tdetail .td-act{margin-top:8px;padding:8px 12px;font-size:10.5px}
+/* 都市内の移動区間（インデントして次のスポットと重ならない） */
+.mv-wrap{padding:0 0 4px 56px;margin:-6px 0 2px}
+.mv{gap:6px}
+.mv-r{padding:7px 10px;gap:9px;min-width:0}
+.mv-ic{width:22px;height:22px;font-size:9px}
+.mv-tx{font-size:10.5px;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mv-act{flex:none;white-space:nowrap;font-size:9.5px}
+/* タイムライン全体の行間を少し広げて詰まり感を解消 */
+.timeline{gap:18px}
+.ev small{line-height:1.6}

@@ -1,4 +1,4 @@
-const CACHE = 'tabi-v11';
+const CACHE = 'tabi-v12';
 const APP_SHELL = ['./', './index.html', './styles.css', './app.js', './manifest.webmanifest', './icon.svg'];
 
 self.addEventListener('install', event => {

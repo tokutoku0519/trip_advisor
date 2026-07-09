@@ -457,7 +457,7 @@ function evRow(e,idx,editable){
  // 移動系（ride）は路線バッジ付きの詳細カードで表示
  if(e.kind==='ride'&&e.seg){return `<div class="ev k-ride"><time>${e.time}</time><i></i><div class="ev-body">${transitDetail(e.seg)}</div></div>`}
  const alts=e.alts?`<div class="alts"><small>${t('s.alt')}</small>${e.alts.map((a,i)=>`<button class="alt-chip" data-act="swap" data-uid="${e.uid}" data-i="${i}">⇄ ${L(a)}</button>`).join('')}</div>`:'';
- const walk=e.go&&idx>0?`<div class="tr-row"><span></span>${moveRows(e.go)}</div>`:'';
+ const walk=e.go&&idx>0?`<div class="mv-wrap">${moveRows(e.go)}</div>`:'';
  const dur=e.dur?` · ${e.dur}${t('s.min')}`:'';
  const sub=e.sub?`<small>${L(e.sub)}${dur}</small>`:(e.type?`<small>${L(TYPE_META[e.type])}${dur}</small>`:'');
  return `${walk}<div class="ev k-${e.kind}"><time>${e.time}</time><i></i><div><b>${e.icon||''} ${L(e.title)}${e.detour?' <em class="detour-tag">寄り道</em>':''}</b>${sub}${alts}</div>${editable?`<button class="ev-edit" data-act="ev-edit" data-uid="${e.uid}">✎</button>`:''}</div>`}
