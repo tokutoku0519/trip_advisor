@@ -179,14 +179,22 @@ const coverArt=(dest)=>{const api=apiBase();
 const AIRPORTS=['羽田空港','成田空港','関西国際空港','中部国際空港','福岡空港','新千歳空港'];
 function savedPlaces(){try{return JSON.parse(localStorage.getItem('tabi.places'))||['東京駅','羽田空港']}catch(e){return ['東京駅','羽田空港']}}
 function setPlaces(a){try{localStorage.setItem('tabi.places',JSON.stringify(a))}catch(e){}}
-function makeGenericDest(name){
- const isIsland=/島$/.test(name);const isKana=/^[ァ-ヶー・\s]{3,}$/.test(name);const isMt=/(山|岳|高原)$/.test(name);
- const mode=isIsland?'⛴':isKana?'✈':isMt?'🚌':'🚄';
- const station=isIsland?{ja:`${name}（港）`,en:`${name} Port`}:isKana?{ja:`${name}国際空港`,en:`${name} Intl Airport`}:{ja:`${name}駅`,en:`${name} Sta.`};
- const ride=isIsland?{ja:'新幹線＋フェリー（乗継はAPIで確定）',en:'Shinkansen + ferry'}:isKana?{ja:'国際線 直行/乗継便（便名はAPIで確定）',en:'International flight'}:isMt?{ja:'特急＋路線バス',en:'Express + bus'}:{ja:'特急（乗継はAPIで確定）',en:'Express'};
- return{id:'generic',ja:name,en:name,country:isKana?'xx':'jp',grad:isIsland?'g-view':isKana?'g-city':'g-view',scene:isIsland?'island':isKana?'skyline':'mountains',emoji:isIsland?'🏝':isKana?'✈':'🧭',feat:['view','food'],needCar:isIsland||isMt,travelMin:isKana?620:isIsland?330:isMt?210:150,arrLocal:isKana?'16:30':undefined,mode,generic:true,_station:station,_ride:ride,
- station,ride,transport:{ja:isKana?'飛行機（往復）':isIsland?'新幹線＋フェリー（往復）':'電車・特急（往復）',en:isKana?'Flights (rt)':'Train (rt)',price:isKana?120000:isIsland?18000:14000},hotel:{ja:`${name}駅前のホテル`,en:`Hotel near ${name}`,price:12000},act:{ja:'ローカルガイドツアー',en:'Local guide tour',price:3000},
- spots:[{ja:`${name}のシンボルスポット`,en:`${name} landmark`,type:'scenery',dur:80},{ja:'旧市街さんぽ',en:'Old town walk',type:'activity',dur:70},{ja:'名物ランチ',en:'Local specialty lunch',type:'food',dur:60},{ja:'展望スポット',en:'Viewpoint',type:'scenery',dur:60},{ja:'地元で人気のカフェ',en:'Popular local café',type:'cafe',dur:45},{ja:'市場・商店街',en:'Local market',type:'activity',dur:70},{ja:'郷土料理ディナー',en:'Regional dinner',type:'food',dur:90},{ja:'夜の川辺さんぽ',en:'Riverside night walk',type:'scenery',dur:40}]}}
+// ふんわり文から地名を拾う（例「銀山温泉に行きたい」→ 銀山温泉）
+function extractPlace(txt){if(!txt)return '';
+ let m=txt.match(/([一-龥ぁ-んァ-ヶーA-Za-z]{2,8}(?:温泉|高原|渓谷|海岸|大社|神宮|城|公園|岬|湖|島|山))/);if(m)return m[1];
+ m=txt.match(/([一-龥ァ-ヶーA-Za-z]{2,10}?)(?:に行きたい|へ行きたい|に行く|へ行く|旅行|に泊|でのんびり)/);if(m)return m[1];
+ return ''}
+function makeGenericDest(name,hint=''){
+ const q=name+' '+hint;
+ const isOnsen=/温泉/.test(q);const isIsland=/島$/.test(name);const isKana=/^[ァ-ヶー・\s]{3,}$/.test(name);const isMt=/(山|岳|高原)$/.test(name);
+ const mode=isIsland?'⛴':isKana?'✈':isMt||isOnsen?'🚌':'🚄';
+ const station=isIsland?{ja:`${name}（港）`,en:`${name} Port`}:isKana?{ja:`${name}国際空港`,en:`${name} Intl Airport`}:isOnsen?{ja:`${name}バス停`,en:`${name} bus stop`}:{ja:`${name}駅`,en:`${name} Sta.`};
+ const ride=isIsland?{ja:'新幹線＋フェリー（乗継はAPIで確定）',en:'Shinkansen + ferry'}:isKana?{ja:'国際線 直行/乗継便（便名はAPIで確定）',en:'International flight'}:isMt||isOnsen?{ja:'特急＋路線バス（乗継はAPIで確定）',en:'Express + bus'}:{ja:'特急（乗継はAPIで確定）',en:'Express'};
+ const onsenSpots=[{ja:`${name} 外湯めぐり`,en:`${name} onsen hopping`,type:'activity',dur:90},{ja:'共同浴場でひと風呂',en:'Public bathhouse',type:'activity',dur:60},{ja:'足湯とレトロ街さんぽ',en:'Foot bath & retro stroll',type:'scenery',dur:50},{ja:'温泉街の食べ歩き',en:'Onsen street bites',type:'food',dur:50},{ja:'老舗旅館の会席ディナー',en:'Ryokan kaiseki dinner',type:'food',dur:90},{ja:'渓谷の絶景スポット',en:'Scenic gorge viewpoint',type:'scenery',dur:60},{ja:'甘味処カフェ',en:'Sweets café',type:'cafe',dur:40},{ja:'夜のガス灯ライトアップ',en:'Evening gaslamp lights',type:'scenery',dur:40}];
+ const genSpots=[{ja:`${name}のシンボルスポット`,en:`${name} landmark`,type:'scenery',dur:80},{ja:'旧市街さんぽ',en:'Old town walk',type:'activity',dur:70},{ja:'名物ランチ',en:'Local specialty lunch',type:'food',dur:60},{ja:'展望スポット',en:'Viewpoint',type:'scenery',dur:60},{ja:'地元で人気のカフェ',en:'Popular local café',type:'cafe',dur:45},{ja:'市場・商店街',en:'Local market',type:'activity',dur:70},{ja:'郷土料理ディナー',en:'Regional dinner',type:'food',dur:90},{ja:'夜の川辺さんぽ',en:'Riverside night walk',type:'scenery',dur:40}];
+ return{id:'generic',ja:name,en:name,country:isKana?'xx':'jp',grad:isOnsen?'g-onsen':isIsland?'g-view':isKana?'g-city':'g-view',scene:isOnsen?'onsen':isIsland?'island':isKana?'skyline':'mountains',emoji:isOnsen?'♨':isIsland?'🏝':isKana?'✈':'🧭',feat:isOnsen?['onsen','view','food']:['view','food'],onsen:isOnsen,needCar:isIsland||isMt,travelMin:isKana?620:isIsland?330:isMt?210:isOnsen?200:150,arrLocal:isKana?'16:30':undefined,mode,generic:true,
+ station,ride,transport:{ja:isKana?'飛行機（往復）':isIsland?'新幹線＋フェリー（往復）':'電車・特急＋バス（往復）',en:isKana?'Flights (rt)':'Train + bus (rt)',price:isKana?120000:isIsland?18000:isOnsen?16000:14000},hotel:isOnsen?{ja:`${name}の老舗旅館`,en:`${name} ryokan`,price:22000}:{ja:`${name}駅前のホテル`,en:`Hotel near ${name}`,price:12000},act:isOnsen?{ja:'貸切露天風呂',en:'Private open-air bath',price:3000}:{ja:'ローカルガイドツアー',en:'Local guide tour',price:3000},
+ spots:isOnsen?onsenSpots:genSpots}}
 
 /* ================= 旅程ビルダー（⑦⑧⑨） ================= */
 let UID=0;const EVMAP={};
@@ -420,12 +428,13 @@ async function searchPlans(){const f=state.form;const nights=parseNights();const
  const spec=nightsSpecified();
  const kws=KW.filter(k=>k.kw.some(w=>(f.vague+' '+f.must).toLowerCase().includes(w)));
  const budget=BUDGETS.find(b=>b.id===f.budget);
- const typed=f.dest.trim();
+ let typed=f.dest.trim();
+ if(!typed){const vp=extractPlace(f.vague)||extractPlace(f.must);if(vp)typed=vp}
  let destHit=typed?DESTS.find(d=>d.ja.includes(typed)||d.en.toLowerCase().includes(typed.toLowerCase())):null;
- if(typed&&!destHit)destHit=makeGenericDest(typed);
+ if(typed&&!destHit)destHit=makeGenericDest(typed,f.vague);
  let cands=[];
  if(destHit){const kwLabel=kws[0]?L(kws[0]):null;
-  const focus=kws[0]&&['cafe','food'].includes(kws[0].feat)?kws[0].feat:(destHit.feat.includes('cafe')?'cafe':'scenery');
+  const focus=destHit.onsen?'activity':(kws[0]&&['cafe','food'].includes(kws[0].feat)?kws[0].feat:(destHit.feat.includes('cafe')?'cafe':'scenery'));
   const focusLabel=kwLabel||L(TYPE_META[focus]);
   cands=[
    {dest:destHit,name:{ja:t('v.classic'),en:t('v.classic')},desc:{ja:T.ja['v.classic.d'],en:T.en['v.classic.d']},opts:{perDay:3},mult:1,reason:destHit.generic?t('reason.generic'):t('reason.dest')},
@@ -465,16 +474,22 @@ const dayTimeline=(day,editable)=>`<div class="timeline">${day.map((e,i)=>evRow(
 const stopsOf=(day)=>day.filter(e=>['spot','meal'].includes(e.kind));
 
 let savedPlans=[];
-function screenPlan(){const tt=activeTrip;const d=destById(tt.destId)||makeGenericDest('旅');
- const saved=savedPlans.length?`<section class="block"><h2>${BMK(true)} ${t('p.saved')}</h2>${savedPlans.map((c,i)=>`<div class="exp saved-plan" data-act="open-saved" data-val="${i}"><span class="b-icon sm">${c.dest.emoji}</span><div><b>${L(c.dest)} — ${L(c.name)}</b><small>${t('r.nights',c.nights)} · ${yen(c.price)}〜</small></div><button class="mini-btn" data-act="del-saved" data-val="${i}">×</button></div>`).join('')}</section>`:'';
+// 人数・旅タイプからメンバー名を作る（一人旅は共有者なし＝②）
+function tripMembers(){const f=state.form;if(f.type==='solo'||f.people<=1)return ['Koki'];
+ const names=['Koki','Yui','Ren','Aoi','Sora','Mei','Rui','Hina'];return names.slice(0,Math.min(f.people||2,8))}
+function screenPlan(){const tt=activeTrip;const d=destById(tt.destId)||tt._generic||makeGenericDest('旅');
  const myTrip=`<div class="trip-card" data-act="goto" data-val="shiori"><div class="trip-cover ${d.grad}">${coverArt(d)}<span class="badge-lime">${t('plan.active')}</span></div>
   <div class="trip-info"><b>${L(tt.title)}</b><small>${tt.dates} · ${tt.members.join(', ')}</small></div><span class="go">→</span></div>`;
+ // 保存したプランも「あなたの旅」内にカード表示（⑥）
+ const savedCards=savedPlans.map((c,i)=>`<div class="trip-card saved" data-act="open-saved" data-val="${i}"><div class="trip-cover ${c.dest.grad}">${coverArt(c.dest)}<span class="badge-save">${BMK(true)} ${state.lang==='ja'?'保存':'Saved'}</span></div>
+  <div class="trip-info"><b>${L(c.dest)} — ${L(c.name)}</b><small>${t('r.nights',c.nights)} · ${yen(c.price)}〜</small></div><button class="mini-btn del" data-act="del-saved" data-val="${i}">×</button></div>`).join('');
+ const saved='';
  const results=state.results?`<section class="block" id="results"><h2>${t('plan.results')}</h2><div class="cands">${state.results.cands.map((c,i)=>`
   <div class="cand ${c.dest.grad}" data-act="open-plan" data-val="${i}">${coverArt(c.dest)}<div class="cand-top"><span class="cand-emoji">${c.dest.emoji}</span><span class="cand-reason">✦ ${c.reason}</span></div>
    <div class="cand-body"><h3>${L(c.dest)}<span class="cand-sub">${L(c.name)}</span></h3><p>${L(c.desc)} · ${t('r.nights',c.nights)}</p><div class="cand-tags">${featTags(c.dest)}</div></div>
    <div class="cand-foot"><b>${yen(c.price)}〜${c.overBudget?`<em class="over">${t('r.over')}</em>`:(state.form.budget?`<em class="fit">${t('r.fit')}</em>`:'')}</b><span><button class="mini-btn" data-act="bm-plan" data-val="${i}">${BMK(false)}</button> <span class="mini-btn">${t('r.detail')} →</span></span></div></div>`).join('')}</div></section>`
  :`<div class="card hint"><span>✦</span><p>${t('plan.empty')}</p></div>`;
- return `<section class="block"><h2>${t('plan.mytrips')}</h2>${myTrip}</section>${saved}${results}`}
+ return `<section class="block"><h2>${t('plan.mytrips')}</h2><div class="trip-list">${myTrip}${savedCards}</div></section>${results}`}
 
 function searchFormHTML(){const f=state.form;
  return `<div class="sheet-card form-sheet"><div class="sheet-bar"><b>✦ ${t('search.title')}</b><button class="close" data-act="close-search">×</button></div>
@@ -538,7 +553,7 @@ function settleInfo(){const list=activeTrip.expenses.filter(x=>state.paypayOn||x
  const debt=mem.map(m=>({m,d:per-paid[m]})).sort((a,b)=>b.d-a.d);
  const transfer=debt[0]&&debt[0].d>0?{from:debt[0].m,to:debt[debt.length-1].m,amt:debt[0].d}:null;
  return{list,total,per,transfer}}
-function screenShiori(){const tt=activeTrip;const d=destById(tt.destId)||makeGenericDest(L(tt.title));
+function screenShiori(){const tt=activeTrip;const d=destById(tt.destId)||tt._generic||makeGenericDest(L(tt.title));
  const head=`<div class="sh-head ${d.grad}">${coverArt(d)}<div class="sh-head-in"><span class="badge-lock">${t('sh.closed')}</span><h2>${L(tt.title)}</h2><p>${tt.dates}</p>
   <div class="sh-members">${tt.members.map(m=>`<span class="avatar sm">${m[0]}</span>`).join('')}<small>${tt.members.join(' · ')}</small></div></div></div>
  <div class="invite-row"><div><small>${t('sh.invite')} · ${t('sh.closed.note')}</small><b>${tt.invite}</b></div><button class="mini-btn" data-act="copy-invite">${t('sh.copy')}</button></div>`;
@@ -765,16 +780,16 @@ document.addEventListener('click',(e)=>{const el=e.target.closest('[data-act],.t
   case 'sheet-day':sheet.day=+val;renderSheet();break;
   case 'close-sheet':$('#planSheet').classList.remove('open');break;
   case 'add-detour':{const r=detourRecs(sheet.cand.dest,sheet.days)[+val];const day=sheet.days[sheet.day];
-   const pos=Math.min(2,day.length);day.splice(pos,0,mkEv({kind:'spot',icon:TYPE_META[r.s.type].icon,time:'＋',title:{ja:r.s.ja,en:r.s.en},type:r.s.type,dur:r.s.dur,detour:true}));
+   const pos=Math.min(2,day.length);day.splice(pos,0,mkEv({kind:'spot',icon:TYPE_META[r.s.type].icon,time:'＋',title:{ja:r.s.ja,en:r.s.en},type:r.s.type,dur:r.s.dur,detour:true,go:{ja:`ルート上・徒歩${r.walk}分`,en:`On route · walk ${r.walk} min`,min:r.walk}}));
    toast(t('toast.detour',L(r.s)));renderSheet();break}
   case 'add-detour-nav':{const d=destById(activeTrip.destId)||makeGenericDest('');const r=detourRecs(d,activeTrip.days)[+val];const day=activeTrip.days[nav.day];
-   day.splice(Math.min(2,day.length),0,mkEv({kind:'spot',icon:TYPE_META[r.s.type].icon,time:'＋',title:{ja:r.s.ja,en:r.s.en},type:r.s.type,dur:r.s.dur,detour:true}));
+   day.splice(Math.min(2,day.length),0,mkEv({kind:'spot',icon:TYPE_META[r.s.type].icon,time:'＋',title:{ja:r.s.ja,en:r.s.en},type:r.s.type,dur:r.s.dur,detour:true,go:{ja:`ルート上・徒歩${r.walk}分`,en:`On route · walk ${r.walk} min`,min:r.walk}}));
    toast(t('toast.detour',L(r.s)));renderNav();break}
   case 'swap':{const ev=EVMAP[+el.dataset.uid];if(ev&&ev.alts){const i=+el.dataset.i;const old={ja:ev.title.ja,en:ev.title.en};ev.title=ev.alts[i];ev.alts[i]=old;toast(t('toast.swap'));
    if($('#planSheet').classList.contains('open'))renderSheet();else render()}break}
   case 'start-trip':{const c=sheet.cand;const d=c.dest;
    activeTrip={destId:d.generic?'kyoto':d.id,title:{ja:`${d.ja}旅行`,en:`${d.en} Trip`},dates:state.form.from&&state.form.to?`${state.form.from} – ${state.form.to}`:(state.lang==='ja'?'日程未定':'Dates TBD'),
-    members:['Koki','Yui'],byCar:(state.form.license==='yes'&&d.country==='jp'&&d.travelMin<420),days:sheet.days,extra:[],invite:`tabi.app/t/${(d.id||'trip').slice(0,3).toUpperCase()}-${1000+Math.floor(Math.random()*9000)}`,album:[],diary:[],expenses:[]};
+    members:tripMembers(),byCar:(state.form.license==='yes'&&d.country==='jp'&&d.travelMin<420),days:sheet.days,extra:[],invite:`tabi.app/t/${(d.id||'trip').slice(0,3).toUpperCase()}-${1000+Math.floor(Math.random()*9000)}`,album:[],diary:[],expenses:[]};
    if(d.generic)activeTrip.destId='generic',activeTrip._generic=d;shioriDay=0;
    $('#planSheet').classList.remove('open');toast(t('toast.start',L(d)));state.screen='shiori';state.shioriTab='itin';render();window.scrollTo({top:0});break}
   case 'goto':state.screen=val;render();window.scrollTo({top:0});break;
@@ -795,7 +810,7 @@ document.addEventListener('click',(e)=>{const el=e.target.closest('[data-act],.t
   case 'ev-edit':openEvEdit(+el.dataset.uid);break;
   case 'ev-save':{const e=EVMAP[+el.dataset.uid];if(e){const nm=($('#evName')||{}).value,tm=($('#evTime')||{}).value;if(nm)e.title={ja:nm,en:nm};if(tm)e.time=tm;activeTrip.days[shioriDay].sort((a,b)=>toMin(a.time)-toMin(b.time));$('#subSheet').classList.remove('open');toast(t('toast.evsave'));render()}break}
   case 'ev-del':{const uid=+el.dataset.uid;const day=activeTrip.days[shioriDay];const ix=day.findIndex(x=>x.uid===uid);if(ix>=0)day.splice(ix,1);$('#subSheet').classList.remove('open');toast(t('toast.evdel'));render();break}
-  case 'ev-add':{const ev=mkEv({kind:'spot',icon:'📍',time:'15:00',title:{ja:'新しいスポット',en:'New spot'},type:'activity',dur:60});activeTrip.days[shioriDay].push(ev);openEvEdit(ev.uid);break}
+  case 'ev-add':{const ev=mkEv({kind:'spot',icon:'📍',time:'15:00',title:{ja:'新しいスポット',en:'New spot'},type:'activity',dur:60,go:{ja:'前の場所から 徒歩10分',en:'10 min walk from previous',min:10}});activeTrip.days[shioriDay].push(ev);openEvEdit(ev.uid);break}
   case 'sh-tab':state.shioriTab=val;render();break;
   case 'sh-day':shioriDay=+val;render();break;
   case 'open-nav':openNav(+val);break;
@@ -803,7 +818,9 @@ document.addEventListener('click',(e)=>{const el=e.target.closest('[data-act],.t
   case 'nav-view':nav.view=val;renderNav();break;
   case 'taxi-p':nav.taxi=val;renderNav();break;
   case 'ext-book':toast(state.lang==='ja'?'外部の予約サイトを開きます（デモ）':'Opening external booking (demo)');break;
-  case 'see-route':toast(state.lang==='ja'?'地図で経路を表示します（デモ）':'Showing route on map (demo)');break;
+  case 'see-route':{if($('#planSheet').classList.contains('open')){sheet.tab='route';renderSheet();const sb=$('#planSheet .sheet-card');if(sb)sb.scrollTop=0;}
+   else if($('#navSheet').classList.contains('open')){nav.view='map';renderNav();}
+   else{openNav(shioriDay);}toast(state.lang==='ja'?'地図で経路を表示します':'Showing route on map');break}
   case 'taxi-call':activeTrip.expenses.push({name:{ja:`タクシー（${nav.taxi}）`,en:`Taxi (${nav.taxi})`},payer:'Koki',amount:1180,src:'taxi'});toast(t('toast.taxi'));break;
   case 'nav-next':nav.step=Math.min(nav.step+1,navSteps(activeTrip.days[nav.day]).length-1);renderNav();break;
   case 'nav-restart':nav.step=0;renderNav();break;

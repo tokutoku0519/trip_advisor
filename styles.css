@@ -511,3 +511,16 @@ input[type="time"].f-input,input[type="date"].f-input{-webkit-appearance:none;ap
 /* タイムライン全体の行間を少し広げて詰まり感を解消 */
 .timeline{gap:18px}
 .ev small{line-height:1.6}
+
+/* あなたの旅：アクティブ＋保存プランの一覧（⑥） */
+.trip-list{display:flex;flex-direction:column;gap:10px}
+.trip-card.saved{opacity:.98}
+.badge-save{position:absolute;top:5px;left:5px;background:rgba(10,12,24,.55);backdrop-filter:blur(6px);color:#fff;padding:3px 7px;border-radius:12px;font-size:8px;font-weight:700;display:inline-flex;align-items:center;gap:3px;z-index:2}
+.badge-save .bmk{width:9px;height:9px}
+.trip-card .mini-btn.del{width:26px;height:26px;padding:0;border-radius:50%;flex:none;margin-right:6px}
+/* ⑦ ショート動画が下で見切れないように高さと余白を調整 */
+.shorts{height:min(72vh,620px);min-height:420px;margin-bottom:6px}
+.short{padding-bottom:6px}
+.short-copy{padding-bottom:26px}
+.short-rail{bottom:30px}
+@media(max-width:560px){.shorts{height:calc(100dvh - 300px);min-height:400px}}
