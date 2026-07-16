@@ -1,6 +1,6 @@
-// tabi API — 旅行プラン生成バックエンド
+// Roamy API — 旅行プラン生成バックエンド
 // Claude (プラン生成・条件解釈) + Google Maps Platform (実在スポット・実経路) を束ねる。
-// フロントは localStorage 'tabi.api' にこのサーバーのURLを入れると自動で接続する。
+// フロントは localStorage 'roamy.api' にこのサーバーのURLを入れると自動で接続する。
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
@@ -12,7 +12,7 @@ app.use(express.json());
 
 const anthropic = new Anthropic(); // ANTHROPIC_API_KEY / `ant auth login` プロファイルを自動解決
 const GMAPS_KEY = process.env.GOOGLE_MAPS_API_KEY || '';
-const MODEL = process.env.TABI_MODEL || 'claude-opus-4-8';
+const MODEL = process.env.ROAMY_MODEL || process.env.TABI_MODEL || 'claude-opus-4-8';
 
 /* ---------- Google Maps Platform プロキシ ---------- */
 // Places Text Search: 実在スポットの検索（⑥）
@@ -141,4 +141,4 @@ app.post('/api/plan', async (req, res) => {
 app.get('/api/health', (_req, res) => res.json({ ok: true, model: MODEL, gmaps: !!GMAPS_KEY }));
 
 const port = process.env.PORT || 8787;
-app.listen(port, () => console.log(`tabi API listening on :${port}`));
+app.listen(port, () => console.log(`Roamy API listening on :${port}`));

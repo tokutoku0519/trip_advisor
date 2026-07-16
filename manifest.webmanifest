@@ -1,7 +1,7 @@
 {
-  "name": "tabi — AI旅行プランナー",
-  "short_name": "tabi",
-  "description": "プラン、旅程、地図、予約、旅の記録をひとつに。",
+  "name": "Roamy — AI旅行プランナー",
+  "short_name": "Roamy",
+  "description": "プラン、旅程、地図、予約、旅の記録をひとつに。あなただけの旅のコンパニオン。",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

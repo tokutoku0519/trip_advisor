@@ -177,8 +177,8 @@ const coverArt=(dest)=>{const api=apiBase();
  const url=api?`${api}/api/photo?location=${encodeURIComponent((dest.en||dest.ja)+' landmark')}`:IMG[dest.id];
  return `${url?`<span class="ph" style="background-image:url('${url}')"></span>`:''}${sceneArt(dest.scene)}`};
 const AIRPORTS=['羽田空港','成田空港','関西国際空港','中部国際空港','福岡空港','新千歳空港'];
-function savedPlaces(){try{return JSON.parse(localStorage.getItem('tabi.places'))||['東京駅','羽田空港']}catch(e){return ['東京駅','羽田空港']}}
-function setPlaces(a){try{localStorage.setItem('tabi.places',JSON.stringify(a))}catch(e){}}
+function savedPlaces(){try{return JSON.parse(localStorage.getItem('roamy.places')||localStorage.getItem('tabi.places'))||['東京駅','羽田空港']}catch(e){return ['東京駅','羽田空港']}}
+function setPlaces(a){try{localStorage.setItem('roamy.places',JSON.stringify(a))}catch(e){}}
 // ふんわり文から地名を拾う（例「銀山温泉に行きたい」→ 銀山温泉）
 function extractPlace(txt){if(!txt)return '';
  let m=txt.match(/([一-龥ぁ-んァ-ヶーA-Za-z]{2,8}(?:温泉|高原|渓谷|海岸|大社|神宮|城|公園|岬|湖|島|山))/);if(m)return m[1];
@@ -334,7 +334,7 @@ function birdMap(stops,active=-1,dest=null){
   ${roadsCasing}${roadsFill}
   <path d="${pathd}" class="gm-route-cas"/><path d="${pathd}" class="gm-route"/>
   ${labels}${pins}
-  <g class="gm-attr"><rect x="228" y="176" width="92" height="14"/><text x="232" y="186">Map · tabi demo</text></g>
+  <g class="gm-attr"><rect x="228" y="176" width="102" height="14"/><text x="232" y="186">Map · Roamy demo</text></g>
  </svg>`}
 
 /* ================= 見つける（⑬） ================= */
@@ -381,14 +381,14 @@ const TIPS=[
 {id:'money',cat:'abroad',icon:'💳',title:{ja:'現金・カード・両替のコツ',en:'Cash, cards & exchange'},lead:{ja:'旅先のお金は「一点集中」ではなく「分散」が基本。',en:'Don\'t concentrate your travel money — spread it.'},article:[
  {h:{ja:'カードは2枚体制',en:'Carry two cards'},p:{ja:'タッチ決済対応のクレジットカードを2枚、別々のブランド（VISAとMastercard）で持つのが基本です。1枚が磁気不良や利用停止になっても旅が止まりません。2枚は別の場所に保管しましょう。財布とパスポートケース、のように。',en:'Two contactless credit cards on different networks (one Visa, one Mastercard) keep the trip alive if one fails or gets blocked. Store them separately — wallet and passport case.'}},
  {h:{ja:'両替のベストプラクティス',en:'Exchange best practice'},p:{ja:'空港の両替所はレートが悪いことが多く、最低限の交通費分だけにするのが定石です。街中の両替所か、現地ATMでのキャッシングの方がレートは有利なことがほとんど。屋台や市場、チップ文化の国では少額紙幣の現金が必須です。',en:'Airport counters usually have the worst rates — exchange only enough for transport. Town exchanges or ATM withdrawals are better. Keep small bills for street food, markets and tipping cultures.'}},
- {h:{ja:'割り勘は記録がすべて',en:'Splitting bills: record everything'},p:{ja:'グループ旅行のお金のもめごとは、ほぼ「誰が何を払ったか分からない」ことから起きます。払った瞬間にアプリに記録して、精算は帰りの移動中に一度だけ。tabiの割り勘機能ならPayPay決済が自動で取り込まれるので、記録の手間すらありません。',en:'Group money trouble comes from unrecorded payments. Log every payment the moment it happens and settle once, on the way home. tabi\'s split feature auto-imports PayPay payments, so there\'s nothing to forget.'}}]},
+ {h:{ja:'割り勘は記録がすべて',en:'Splitting bills: record everything'},p:{ja:'グループ旅行のお金のもめごとは、ほぼ「誰が何を払ったか分からない」ことから起きます。払った瞬間にアプリに記録して、精算は帰りの移動中に一度だけ。Roamyの割り勘機能ならPayPay決済が自動で取り込まれるので、記録の手間すらありません。',en:'Group money trouble comes from unrecorded payments. Log every payment the moment it happens and settle once, on the way home. Roamy\'s split feature auto-imports PayPay payments, so there\'s nothing to forget.'}}]},
 ];
 const TIP_CATS=[{id:'all',ja:'すべて',en:'All'},{id:'prep',ja:'準備',en:'Prep'},{id:'items',ja:'持ち物',en:'Packing'},{id:'safety',ja:'安全',en:'Safety'},{id:'abroad',ja:'海外',en:'Abroad'}];
 let tipCat='all';
 
 /* ================= アクティブな旅 ================= */
 let activeTrip={destId:'kyoto',title:{ja:'京都旅行',en:'Kyoto Trip'},dates:'7/18 (Sat) – 7/20 (Mon)',members:['Koki','Yui'],byCar:false,
- days:buildItinerary(destById('kyoto'),3,{},{origin:'自宅（東京）',roundtrip:true,people:2}),extra:[],invite:'tabi.app/t/KYO-8264',
+ days:buildItinerary(destById('kyoto'),3,{},{origin:'自宅（東京）',roundtrip:true,people:2}),extra:[],invite:'roamy.app/t/KYO-8264',
  album:[{grad:'g-kyoto',emoji:'⛩',label:{ja:'DAY1 清水寺',en:'Day 1 Kiyomizu'}},{grad:'g-food',emoji:'🍡',label:{ja:'DAY1 祇園',en:'Day 1 Gion'}},{grad:'g-alley',emoji:'🏮',label:{ja:'DAY2 先斗町',en:'Day 2 Pontocho'}},{grad:'g-view',emoji:'🌇',label:{ja:'DAY2 鴨川',en:'Day 2 Kamo River'}}],
  diary:[{d:1,time:'21:04',who:'Yui',text:{ja:'清水寺、朝イチで行って正解。人が少なくて空気が澄んでた。',en:'Kiyomizu first thing in the morning — so quiet, so clear.'}},{d:2,time:'15:22',who:'Koki',text:{ja:'抹茶パフェ、並んだけど後悔なし🍵',en:'Queued for the matcha parfait. Zero regrets 🍵'}}],
  expenses:[{name:{ja:'新幹線（2人分 往復）',en:'Shinkansen (2 rt)'},payer:'Koki',amount:53280,src:'paypay'},{name:{ja:'ホテル 2泊',en:'Hotel, 2 nights'},payer:'Yui',amount:48000,src:'card'},{name:{ja:'祇園ランチ',en:'Gion lunch'},payer:'Koki',amount:4600,src:'paypay'},{name:{ja:'タクシー',en:'Taxi'},payer:'Yui',amount:1800,src:'paypay'}]};
@@ -405,7 +405,7 @@ function nightsSpecified(){const f=state.form;return !!((f.from&&f.to)||f.stay||
 function distNights(dest){const tm=dest.travelMin||150;return tm>=400?3:tm>=180?2:1}
 function planPrice(dest,nights,mult=1){const n=Math.max(nights,1);
  return Math.round((dest.transport.price+dest.hotel.price*n+dest.act.price+3500*(nights+1))*mult/100)*100}
-const apiBase=()=>{try{return (localStorage.getItem('tabi.api')||'').replace(/\/$/,'')}catch(e){return ''}};
+const apiBase=()=>{try{return (localStorage.getItem('roamy.api')||localStorage.getItem('tabi.api')||'').replace(/\/$/,'')}catch(e){return ''}};
 function remoteCand(rc,nights){const d=makeGenericDest(rc.destName||'旅先');
  d.ja=rc.destName;d.en=rc.destNameEn||rc.destName;d.emoji=rc.emoji||'🧭';
  if(rc.spots&&rc.spots.length)d.spots=rc.spots.map(x=>({ja:x.name,en:x.nameEn||x.name,type:x.type||'activity',dur:x.dur||60,
@@ -766,7 +766,7 @@ document.addEventListener('click',(e)=>{const el=e.target.closest('[data-act],.t
   case 'origin-gps':{if(navigator.geolocation){navigator.geolocation.getCurrentPosition(pos=>{state.form.origin=`現在地（${pos.coords.latitude.toFixed(3)}, ${pos.coords.longitude.toFixed(3)}）`;toast(t('toast.gps.ok'));refreshSearch()},()=>toast(t('toast.gps.ng')),{timeout:5000})}else toast(t('toast.gps.ng'));break}
   case 'open-settings':openSettings();break;
   case 'set-del':{const a=savedPlaces();a.splice(+val,1);setPlaces(a);openSettings();break}
-  case 'api-save':{const v=($('#apiBaseInput')||{}).value||'';try{localStorage.setItem('tabi.api',v.trim())}catch(e){};toast(t('toast.place'));break}
+  case 'api-save':{const v=($('#apiBaseInput')||{}).value||'';try{localStorage.setItem('roamy.api',v.trim())}catch(e){};toast(t('toast.place'));break}
   case 'set-add':{const v=($('#setNew')||{}).value;if(v&&v.trim()){const a=savedPlaces();a.push(v.trim());setPlaces(a);toast(t('toast.place'));openSettings()}break}
   case 'people':state.form.people=Math.min(9,Math.max(1,state.form.people+ +val));refreshSearch();break;
   case 'open-search':case undefined:break;
@@ -789,7 +789,7 @@ document.addEventListener('click',(e)=>{const el=e.target.closest('[data-act],.t
    if($('#planSheet').classList.contains('open'))renderSheet();else render()}break}
   case 'start-trip':{const c=sheet.cand;const d=c.dest;
    activeTrip={destId:d.generic?'kyoto':d.id,title:{ja:`${d.ja}旅行`,en:`${d.en} Trip`},dates:state.form.from&&state.form.to?`${state.form.from} – ${state.form.to}`:(state.lang==='ja'?'日程未定':'Dates TBD'),
-    members:tripMembers(),byCar:(state.form.license==='yes'&&d.country==='jp'&&d.travelMin<420),days:sheet.days,extra:[],invite:`tabi.app/t/${(d.id||'trip').slice(0,3).toUpperCase()}-${1000+Math.floor(Math.random()*9000)}`,album:[],diary:[],expenses:[]};
+    members:tripMembers(),byCar:(state.form.license==='yes'&&d.country==='jp'&&d.travelMin<420),days:sheet.days,extra:[],invite:`roamy.app/t/${(d.id||'trip').slice(0,3).toUpperCase()}-${1000+Math.floor(Math.random()*9000)}`,album:[],diary:[],expenses:[]};
    if(d.generic)activeTrip.destId='generic',activeTrip._generic=d;shioriDay=0;
    $('#planSheet').classList.remove('open');toast(t('toast.start',L(d)));state.screen='shiori';state.shioriTab='itin';render();window.scrollTo({top:0});break}
   case 'goto':state.screen=val;render();window.scrollTo({top:0});break;

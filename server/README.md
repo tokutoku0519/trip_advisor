@@ -1,9 +1,9 @@
-# tabi API — 本物のデータでプランを作るバックエンド
+# Roamy API — 本物のデータでプランを作るバックエンド
 
 フロント（静的PWA）のデモ用擬似AIを、**Claude + Google Maps Platform** の実データに置き換えるサーバーです。
 
 ```
-フロント(tabi) ──POST /api/plan──▶ このサーバー ──▶ Claude（条件解釈・プラン生成）
+フロント(Roamy) ──POST /api/plan──▶ このサーバー ──▶ Claude（条件解釈・プラン生成）
                                         │
                                         └──▶ Google Places / Directions（実在スポット・実経路で根拠付け）
 ```
