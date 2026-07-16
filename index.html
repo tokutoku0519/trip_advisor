@@ -3,104 +3,40 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#f7f8fc" />
+  <meta name="theme-color" content="#f6f7fb" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="tabi" />
+  <meta name="apple-mobile-web-app-title" content="Roamy" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="icon.svg" />
-  <title>Tabi — 旅を、ひとつの物語に。</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <title>Roamy — 旅のすべてを、これひとつで。</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
-  <header class="topbar">
-    <a class="brand" href="#" aria-label="Tabi ホーム"><span class="brand-mark">t</span><span>tabi</span></a>
-    <nav class="desktop-nav" aria-label="メインナビゲーション">
-      <a class="active" href="#home">ホーム</a><a href="#plans">プラン</a><a href="#discover">見つける</a><a href="#journey">旅の記録</a>
-    </nav>
-    <div class="top-actions"><button class="icon-btn" aria-label="通知">♢<span class="dot"></span></button><button class="avatar">KT</button></div>
+  <header class="appbar">
+    <a class="brand" href="#"><span class="brand-mark"><svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" aria-label="Roamy"><defs><linearGradient id="rgHead" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#315ff4"/><stop offset="1" stop-color="#865af2"/></linearGradient></defs><rect width="512" height="512" rx="144" fill="url(#rgHead)"/><g fill="none" stroke="#fff" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"><path d="M170 156 V 366"/><path d="M170 160 H 232 C 292 160 294 248 236 252 L 202 252"/><path d="M228 250 C 270 306 286 330 300 336 C 330 348 348 250 388 154"/></g><path d="M404 138 L 342 150 L 370 176 L 376 210 Z" fill="#fff"/></svg></span><span>Roamy</span></a>
+    <div class="top-actions">
+      <button class="lang-btn" id="langBtn">EN</button>
+      <button class="avatar">KT</button>
+    </div>
   </header>
 
-  <main id="home">
-    <section class="hero">
-      <div class="hero-copy">
-        <div class="eyebrow"><span>✦</span> AI TRAVEL CONCIERGE</div>
-        <h1>次の旅を、<br><em>もっと自由に。</em></h1>
-        <p>あなたの気分から、まだ知らない旅へ。<br>プランも予約も記録も、ひとつの場所で。</p>
-        <div class="hero-stats"><span><b>12,400+</b> 旅のプラン</span><i></i><span><b>98%</b> 満足度</span></div>
-      </div>
+  <main id="app"></main>
 
-      <div class="planner-card" id="planner">
-        <div class="planner-head"><div><span class="spark">✦</span><h2>どんな旅にする？</h2><p>ざっくりでも大丈夫。AIが形にします。</p></div><span class="step-pill">1 / 2</span></div>
-        <div class="destination-input">
-          <span class="pin-icon">⌖</span><div><label for="destination">行き先</label><input id="destination" value="京都" placeholder="どこへ行く？"></div>
-          <button class="round-btn" id="randomPlace" aria-label="行き先を提案">⌁</button>
-        </div>
-        <div class="field-row">
-          <button class="field-select" id="dateBtn"><span>◫</span><div><small>日程</small><b id="dateLabel">7月18日 — 20日</b></div></button>
-          <button class="field-select" id="peopleBtn"><span>♙</span><div><small>人数</small><b id="peopleLabel">2人</b></div></button>
-        </div>
-        <div class="mood-block"><div class="label-line"><span>今の気分は？</span><small>複数選択OK</small></div><div class="chips" id="moodChips">
-          <button class="chip active">🍵 癒されたい</button><button class="chip">🍜 おいしいもの</button><button class="chip">📷 写真を撮る</button><button class="chip">🪄 穴場めぐり</button>
-        </div></div>
-        <button class="primary-btn" id="generateBtn"><span>AIに旅をつくってもらう</span><b>→</b></button>
-        <p class="fineprint"><span>✦</span> 1分ほどで、3つのプランを提案します</p>
-      </div>
-    </section>
+  <nav class="tabbar">
+    <button class="tab active" data-screen="plan"><span>▤</span><small data-i18n="tab.plan">プラン</small></button>
+    <button class="tab" data-screen="discover"><span>⌕</span><small data-i18n="tab.discover">見つける</small></button>
+    <button class="fab" id="fabBtn" aria-label="新しい旅">✦</button>
+    <button class="tab" data-screen="shiori"><span>▤</span><small data-i18n="tab.shiori">しおり</small></button>
+    <button class="tab" data-screen="tips"><span>ⓘ</span><small data-i18n="tab.tips">お役立ち</small></button>
+  </nav>
 
-    <section class="section plans-section" id="plans">
-      <div class="section-heading"><div><span class="kicker">JUST FOR YOU</span><h2>あなたに似合う、3つの旅</h2></div><button class="text-btn" id="regenerateBtn">条件を変える ↗</button></div>
-      <div class="plan-grid" id="planGrid">
-        <article class="plan-card featured" data-plan="王道と余白"><div class="plan-photo photo-kyoto"><div class="badge">BEST MATCH · 96%</div><button class="heart active">♥</button><div class="photo-caption"><small>PLAN A</small><h3>王道と余白を<br>味わう京都</h3><p>定番も、小さな発見も。</p></div></div><div class="plan-info"><div class="meta"><span>2泊3日</span><span>徒歩多め</span><span>¥32,800〜</span></div><button class="choose-plan">この旅を見る <span>→</span></button></div></article>
-        <article class="plan-card" data-plan="路地裏と喫茶"><div class="plan-photo photo-alley"><div class="badge dark">LOCAL PICK</div><button class="heart">♡</button><div class="photo-caption"><small>PLAN B</small><h3>路地裏と喫茶を<br>めぐる京都</h3><p>静かな京都に会いに行く。</p></div></div><div class="plan-info"><div class="meta"><span>2泊3日</span><span>のんびり</span><span>¥27,400〜</span></div><button class="choose-plan">この旅を見る <span>→</span></button></div></article>
-        <article class="plan-card" data-plan="食いしん坊"><div class="plan-photo photo-food"><div class="badge dark">FOOD LOVER</div><button class="heart">♡</button><div class="photo-caption"><small>PLAN C</small><h3>朝から夜まで<br>食いしん坊の京都</h3><p>おいしい記憶を、持ち帰る。</p></div></div><div class="plan-info"><div class="meta"><span>2泊3日</span><span>グルメ</span><span>¥38,600〜</span></div><button class="choose-plan">この旅を見る <span>→</span></button></div></article>
-      </div>
-    </section>
+  <div class="sheet" id="searchSheet" aria-hidden="true"></div>
+  <div class="sheet" id="planSheet" aria-hidden="true"></div>
+  <div class="sheet" id="navSheet" aria-hidden="true"></div>
+  <div class="sheet" id="subSheet" aria-hidden="true"></div>
+  <div class="toast" id="toast"><span>✓</span><p></p></div>
 
-    <section class="section discover-section" id="discover">
-      <div class="section-heading light"><div><span class="kicker">SWIPE & DISCOVER</span><h2>動画で、旅先の空気を感じる</h2><p>気になるスポットをスワイプ。好きがそのまま旅程になります。</p></div><div class="carousel-controls"><button id="prevSpot">←</button><button id="nextSpot">→</button></div></div>
-      <div class="video-stage">
-        <div class="mini-phone behind left"><div class="mini-cover food-cover"><span>錦市場</span></div></div>
-        <div class="video-phone" id="videoPhone">
-          <div class="video-cover temple-cover"><div class="video-top"><span class="live-pill">おすすめ</span><span>•••</span></div><div class="video-copy"><small>東山区・京都</small><h3 id="spotTitle">夕暮れの二年坂</h3><p id="spotDesc">灯りがともる、少し前。<br>いちばん美しい時間。</p><div class="author"><span class="creator">旅</span><div><b>@tabi_kyoto</b><small>1.2万回再生</small></div></div></div><div class="social-rail"><button>♥<small>1.2K</small></button><button>▣<small>128</small></button><button>↗<small>共有</small></button></div><button class="play-btn" id="playBtn">▶</button></div>
-          <button class="add-spot" id="addSpotBtn">＋ 旅程に追加</button>
-        </div>
-        <div class="mini-phone behind right"><div class="mini-cover river-cover"><span>鴨川</span></div></div>
-      </div>
-    </section>
-
-    <section class="section itinerary-section" id="itinerary">
-      <div class="section-heading"><div><span class="kicker">YOUR ITINERARY</span><h2>迷わない旅程を、ひとつに</h2><p>時間、移動、予約まで。必要なことだけ、見やすく。</p></div><div class="day-tabs"><button class="active">DAY 1</button><button>DAY 2</button><button>DAY 3</button></div></div>
-      <div class="itinerary-layout">
-        <div class="schedule-card"><div class="schedule-head"><div><small>7月18日（土）</small><h3>古都の朝、路地裏の夜</h3></div><span>☀ 28°C</span></div>
-          <div class="timeline">
-            <div class="event"><time>09:30</time><i></i><div><span class="event-type">START</span><h4>京都駅</h4><p>新幹線で到着・荷物を預ける</p></div><span class="thumb station"></span></div>
-            <div class="transit"><span></span><p>市バス 206系統 · 18分</p></div>
-            <div class="event"><time>10:30</time><i></i><div><span class="event-type green">SPOT</span><h4>清水寺</h4><p>朝の静けさが残る境内へ · 90分</p><button class="ticket">チケット購入済み ✓</button></div><span class="thumb temple"></span></div>
-            <div class="transit"><span></span><p>徒歩 · 8分</p></div>
-            <div class="event"><time>12:20</time><i></i><div><span class="event-type orange">LUNCH</span><h4>％ ARABICA Kyoto</h4><p>鴨川を眺めながら軽めのランチ</p></div><span class="thumb coffee"></span></div>
-          </div><button class="outline-btn" id="detailBtn">旅程をすべて見る →</button>
-        </div>
-        <div class="map-card"><div class="map-bg"><svg viewBox="0 0 600 460" aria-label="京都ルート地図"><path class="river" d="M455 -20 C420 80, 500 150, 450 250 S410 380, 460 500"/><g class="roads"><path d="M-20 80 L620 130"/><path d="M-20 250 L620 230"/><path d="M-20 390 L620 350"/><path d="M100 -10 L150 480"/><path d="M300 -10 L280 480"/><path d="M520 -10 L500 480"/></g><path class="route" d="M135 368 C180 310, 245 340, 286 267 S373 210, 410 115"/><circle cx="135" cy="368" r="10"/><circle cx="286" cy="267" r="10"/><circle cx="410" cy="115" r="10"/></svg><div class="map-pin p1">1</div><div class="map-pin p2">2</div><div class="map-pin p3">3</div><div class="map-card-label"><span>今日の移動</span><b>8.4 km · 約42分</b></div><button class="nav-btn" id="navBtn">↗ ナビを開始</button></div></div>
-      </div>
-    </section>
-
-    <section class="section journey-section" id="journey">
-      <div class="journey-copy"><span class="kicker">MEMORIES, BEAUTIFULLY KEPT</span><h2>旅のあとも、<br>物語はつづく。</h2><p>写真もルートも支出も、自動で一冊の旅のしおりに。友達との共有も、ワンタップ。</p><div class="feature-list"><span>✓ 写真を日付・場所で整理</span><span>✓ 訪れたルートを自動記録</span><span>✓ URLひとつで友達に共有</span></div><button class="dark-btn" id="shareBtn">旅のしおりを見る →</button></div>
-      <div class="memory-collage"><div class="polaroid one"><div class="memory-img m1"></div><p>Day 1 · 祇園</p></div><div class="polaroid two"><div class="memory-img m2"></div><p>おいしかった ☺</p></div><div class="route-summary"><div class="tiny-map"></div><div><small>KYOTO TRIP</small><h3>18 spots</h3><p>28.6 km · 36,248 steps</p></div></div></div>
-    </section>
-  </main>
-
-  <footer><a class="brand" href="#"><span class="brand-mark">t</span><span>tabi</span></a><p>旅を、ひとつの物語に。</p><div><a href="#">利用規約</a><a href="#">プライバシー</a><span>© 2026 tabi</span></div></footer>
-
-  <div class="mobile-nav"><a href="#home" class="active">⌂<small>ホーム</small></a><a href="#discover">⌕<small>見つける</small></a><button id="mobilePlan">✦</button><a href="#itinerary">▤<small>旅程</small></a><a href="#journey">♙<small>マイページ</small></a></div>
-  <div class="toast" id="toast"><span>✓</span><p>旅程に追加しました</p></div>
-  <div class="modal" id="modal" aria-hidden="true"><div class="modal-backdrop"></div><div class="modal-card"><button class="modal-close" id="modalClose">×</button><span class="modal-icon">✦</span><h2 id="modalTitle">旅をつくっています</h2><p id="modalText">あなたの「好き」を組み合わせて、3つのプランを考えています。</p><div class="loading"><i></i><i></i><i></i></div><button class="primary-btn modal-action" id="modalAction">プランを見る →</button></div></div>
   <script src="app.js"></script>
   <script>
     if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
